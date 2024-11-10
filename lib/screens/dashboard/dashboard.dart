@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-
-//Import helpers
-import '../../widgets/tile_builder.dart';
+import 'package:guard/screens/help_and_guidance/help_and_guidance.dart';
+import 'package:guard/widgets/tile_builder.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -15,7 +14,6 @@ class DashboardScreen extends StatelessWidget {
       body: GridView.count(
         crossAxisCount: 2,
         children: <Widget>[
-
           //NMAP Scan
           buildTiles(
             title: 'Nmap Scan',
@@ -40,20 +38,17 @@ class DashboardScreen extends StatelessWidget {
             onTap: () {},
           ),
 
-          //Wi-Fi Scanner
+          //Help and Guidance
           buildTiles(
-            title: 'Wi-Fi Scanner',
+            title: 'Help and Guidance',
             color: Colors.purple,
-            icon: Icons.wifi,
-            onTap: () {},
-          ),
-
-          //Risk Assessment
-          buildTiles(
-            title: 'Risk Assessment',
-            color: Colors.red,
-            icon: Icons.warning,
-            onTap: () {},
+            icon: Icons.help,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HelpAndGuidance()),
+              );
+            },
           ),
         ],
       ),
