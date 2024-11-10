@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'screens/dashboard/dashboard_screen.dart';
+import 'screens/dashboard/dashboard.dart';
 
 void main() {
   runApp(const WiFiGuardApp());
