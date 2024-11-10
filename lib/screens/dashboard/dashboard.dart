@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+//Import helpers
+import '../../widgets/tile_builder.dart';
+
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
@@ -12,8 +15,9 @@ class DashboardScreen extends StatelessWidget {
       body: GridView.count(
         crossAxisCount: 2,
         children: <Widget>[
+
           //NMAP Scan
-          _buildTiles(
+          buildTiles(
             title: 'Nmap Scan',
             color: Colors.blue,
             icon: Icons.network_check,
@@ -21,7 +25,7 @@ class DashboardScreen extends StatelessWidget {
           ),
 
           //Shodan Scan
-          _buildTiles(
+          buildTiles(
             title: 'Shodan Scan',
             color: Colors.green,
             icon: Icons.security,
@@ -29,7 +33,7 @@ class DashboardScreen extends StatelessWidget {
           ),
 
           //IP checker
-          _buildTiles(
+          buildTiles(
             title: 'IP Checker',
             color: Colors.orange,
             icon: Icons.public,
@@ -37,7 +41,7 @@ class DashboardScreen extends StatelessWidget {
           ),
 
           //Wi-Fi Scanner
-          _buildTiles(
+          buildTiles(
             title: 'Wi-Fi Scanner',
             color: Colors.purple,
             icon: Icons.wifi,
@@ -45,42 +49,13 @@ class DashboardScreen extends StatelessWidget {
           ),
 
           //Risk Assessment
-          _buildTiles(
+          buildTiles(
             title: 'Risk Assessment',
             color: Colors.red,
             icon: Icons.warning,
             onTap: () {},
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildTiles({
-    required String title,
-    required Color color,
-    required IconData icon,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Icon(icon, color: Colors.white, size: 40),
-            const SizedBox(height: 10),
-            Text(
-              title,
-              style: const TextStyle(color: Colors.white, fontSize: 18),
-            ),
-          ],
-        ),
       ),
     );
   }
