@@ -15,16 +15,13 @@ class SettingsScreen extends StatelessWidget {
           SwitchListTile(
             title: const Text('Dark Mode'),
             value: false,
-            onChanged: (value) {
-            },
+            onChanged: (value) {},
           ),
-
           const Divider(color: Colors.grey),
           SwitchListTile(
             title: const Text('Enable Notifications'),
             value: false,
-            onChanged: (value) {
-            },
+            onChanged: (value) {},
           ),
         ],
       ),

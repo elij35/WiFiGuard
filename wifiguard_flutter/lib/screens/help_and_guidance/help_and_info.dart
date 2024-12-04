@@ -18,7 +18,7 @@ class HelpAndInfoScreen extends StatelessWidget {
             context,
             title: 'Risks of Public Wi-Fi',
             description:
-            'Learn about the dangers of using public Wi-Fi networks and how to protect yourself.',
+                'Learn about the dangers of using public Wi-Fi networks and how to protect yourself.',
             color: Colors.blue.shade100,
             onTap: () {
               Navigator.push(
