@@ -44,7 +44,14 @@ class DashboardScreen extends StatelessWidget {
                   'Connected',
                   style: TextStyle(color: Colors.green),
                 ),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const NetworkInfoScreen(),
+                    ),
+                  );
+                },
               ),
             ),
             const SizedBox(height: 16),
