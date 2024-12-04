@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:guard/widgets/tile_builder.dart';
+import 'package:guard/screens/settings/settings.dart';
+import 'package:guard/screens/help_and_guidance/help_and_info.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -12,7 +14,14 @@ class DashboardScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SettingsScreen(),
+                ),
+              );
+            },
           ),
         ],
       ),
@@ -53,7 +62,14 @@ class DashboardScreen extends StatelessWidget {
               context,
               label: 'Help and Info',
               icon: Icons.help,
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HelpAndInfoScreen(),
+                  ),
+                );
+              },
             ),
             buildDashboardButton(
               context,
