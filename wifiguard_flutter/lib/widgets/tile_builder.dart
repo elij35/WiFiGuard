@@ -61,3 +61,32 @@ Widget buildDashboardButton(BuildContext context,
     ),
   );
 }
+
+//Rows on network stats screen
+class NetworkInfoRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const NetworkInfoRow({
+    super.key,
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          Text(value),
+        ],
+      ),
+    );
+  }
+}
