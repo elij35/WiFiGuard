@@ -6,7 +6,10 @@ import 'package:guard/screens/settings/settings.dart';
 import 'package:guard/widgets/tile_builder.dart';
 
 class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({super.key});
+  final ValueNotifier<ThemeMode> themeModeNotifier;
+
+  const DashboardScreen({Key? key, required this.themeModeNotifier})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +23,8 @@ class DashboardScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const SettingsScreen(),
+                  builder: (context) =>
+                      SettingsScreen(themeModeNotifier: themeModeNotifier),
                 ),
               );
             },
@@ -33,7 +37,7 @@ class DashboardScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Card(
-              color: Colors.blue,
+              color: Color(0xff00177c),
               child: ListTile(
                 leading: const Icon(Icons.wifi, color: Colors.white),
                 title: const Text(
@@ -42,7 +46,7 @@ class DashboardScreen extends StatelessWidget {
                 ),
                 subtitle: const Text(
                   'Connected',
-                  style: TextStyle(color: Colors.green),
+                  style: TextStyle(color: Color(0xff00f16b)),
                 ),
                 onTap: () {
                   Navigator.push(

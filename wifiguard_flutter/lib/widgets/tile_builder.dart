@@ -49,6 +49,7 @@ Widget buildHelpTopicCard(
   );
 }
 
+//Buttons on the dashboard
 Widget buildDashboardButton(BuildContext context,
     {required String label,
     required IconData icon,
@@ -86,6 +87,29 @@ class NetworkInfoRow extends StatelessWidget {
           ),
           Text(value),
         ],
+      ),
+    );
+  }
+
+// Helper method to build each switch tile
+  Widget buildSwitchTile({
+    required String title,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+  }) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      title: Text(
+        title,
+        style: const TextStyle(color: Colors.white),
+      ),
+      trailing: Switch(
+        value: value,
+        onChanged: onChanged,
+        activeColor: Color(0xff1dfd42),
+        // Customize switch active color
+        inactiveThumbColor: Colors.grey,
+        inactiveTrackColor: Colors.grey[700],
       ),
     );
   }
