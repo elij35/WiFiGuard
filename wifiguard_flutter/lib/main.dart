@@ -8,7 +8,7 @@ void main() {
 class WiFiGuardApp extends StatelessWidget {
   // Centralized theme mode state
   final ValueNotifier<ThemeMode> themeModeNotifier =
-  ValueNotifier(ThemeMode.light);
+      ValueNotifier(ThemeMode.light);
 
   WiFiGuardApp({super.key});
 
