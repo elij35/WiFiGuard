@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:guard/widgets/tile_builder.dart';
+import 'package:WiFiGuard/widgets/tile_builder.dart';
 
 class NetworkInfoScreen extends StatefulWidget {
   const NetworkInfoScreen({super.key});

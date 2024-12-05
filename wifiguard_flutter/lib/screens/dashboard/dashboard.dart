@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:guard/screens/connected_devices/connected_devices.dart';
-import 'package:guard/screens/help_and_guidance/help_and_info.dart';
-import 'package:guard/screens/network_info/network_info.dart';
-import 'package:guard/screens/settings/settings.dart';
-import 'package:guard/widgets/tile_builder.dart';
+import 'package:WiFiGuard/screens/connected_devices/connected_devices.dart';
+import 'package:WiFiGuard/screens/help_and_guidance/help_and_info.dart';
+import 'package:WiFiGuard/screens/network_info/network_info.dart';
+import 'package:WiFiGuard/screens/settings/settings.dart';
+import 'package:WiFiGuard/widgets/tile_builder.dart';
 
 class DashboardScreen extends StatelessWidget {
   final ValueNotifier<ThemeMode> themeModeNotifier;
 
-  const DashboardScreen({Key? key, required this.themeModeNotifier})
-      : super(key: key);
+  const DashboardScreen({super.key, required this.themeModeNotifier});
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,4 @@
-package com.example.guard;
+package com.example.WiFiGuard;
 
 import android.Manifest;
 import android.content.Context;

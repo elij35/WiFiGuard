@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:guard/screens/dashboard/dashboard.dart';
+import 'package:WiFiGuard/screens/dashboard/dashboard.dart';
 
 void main() {
   runApp(WiFiGuardApp());

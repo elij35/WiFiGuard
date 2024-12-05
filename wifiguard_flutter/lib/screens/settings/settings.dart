@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 class SettingsScreen extends StatefulWidget {
   final ValueNotifier<ThemeMode> themeModeNotifier;
 
-  const SettingsScreen({Key? key, required this.themeModeNotifier})
-      : super(key: key);
+  const SettingsScreen({super.key, required this.themeModeNotifier});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();

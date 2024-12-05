@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:guard/screens/help_and_guidance/guidance/public_wifi_risks.dart';
-import 'package:guard/widgets/tile_builder.dart';
+import 'package:WiFiGuard/screens/help_and_guidance/guidance/public_wifi_risks.dart';
+import 'package:WiFiGuard/widgets/tile_builder.dart';
 
 class HelpAndInfoScreen extends StatelessWidget {
   const HelpAndInfoScreen({super.key});
