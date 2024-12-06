@@ -1,3 +1,4 @@
+import 'package:WiFiGuard/widgets/tile_builder.dart';
 import 'package:flutter/material.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -29,10 +30,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Determine if the current theme is dark or light
+    // Check if the current theme is dark or light
     final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
-
-    // Adjust the green color dynamically
     final activeSwitchColor =
         isDarkTheme ? Color(0xff1ab864) : Color(0xff008f4a);
 
@@ -43,22 +42,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
-          SwitchListTile(
-            title: const Text('Dark Mode'),
-            value: isDarkMode,
-            onChanged: _toggleTheme,
-            activeColor: activeSwitchColor, // Use dynamically set color
+          // Dark Mode Toggle
+          buildSettingTile(
+            context,
+            title: 'Dark Mode',
+            subtitle: 'Toggle between dark and light themes',
+            switchValue: isDarkMode,
+            onSwitchChanged: _toggleTheme,
+            activeColor: activeSwitchColor,
           ),
           const Divider(color: Colors.grey),
-          SwitchListTile(
-            title: const Text('Enable Notifications'),
-            value: isNotificationsEnabled,
-            onChanged: (value) {
+
+          // Notifications Toggle
+          buildSettingTile(
+            context,
+            title: 'Enable Notifications',
+            subtitle: 'Receive notifications for network activity',
+            switchValue: isNotificationsEnabled,
+            onSwitchChanged: (value) {
               setState(() {
                 isNotificationsEnabled = value;
               });
             },
-            activeColor: activeSwitchColor, // Use dynamically set color
+            activeColor: activeSwitchColor,
           ),
         ],
       ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-// Tiles used on help and guidance pages (list format)
+// Help and info layout
 Widget buildHelpTopicCard(
   BuildContext context, {
   required String title,
@@ -49,7 +49,7 @@ Widget buildHelpTopicCard(
   );
 }
 
-//Buttons on the dashboard
+//Dashboard layout
 Widget buildDashboardButton(BuildContext context,
     {required String label,
     required IconData icon,
@@ -63,7 +63,7 @@ Widget buildDashboardButton(BuildContext context,
   );
 }
 
-//Rows on network stats screen
+//Network info row layout
 class NetworkInfoRow extends StatelessWidget {
   final String label;
   final String value;
@@ -90,27 +90,35 @@ class NetworkInfoRow extends StatelessWidget {
       ),
     );
   }
+}
 
-// Helper method to build each switch tile
-  Widget buildSwitchTile({
-    required String title,
-    required bool value,
-    required ValueChanged<bool> onChanged,
-  }) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      title: Text(
-        title,
-        style: const TextStyle(color: Colors.white),
+// Settings layout
+Widget buildSettingTile(BuildContext context, {
+  required String title,
+  required String subtitle,
+  required bool switchValue,
+  required ValueChanged<bool> onSwitchChanged,
+  required Color activeColor,
+}) {
+  return Card(
+    margin: const EdgeInsets.symmetric(vertical: 8.0),
+    child: ListTile(
+      title: Text(title, style: Theme
+          .of(context)
+          .textTheme
+          .bodyLarge),
+      subtitle: Text(
+        subtitle,
+        style: Theme
+            .of(context)
+            .textTheme
+            .bodyMedium,
       ),
       trailing: Switch(
-        value: value,
-        onChanged: onChanged,
-        activeColor: Color(0xff1dfd42),
-        // Customize switch active color
-        inactiveThumbColor: Colors.grey,
-        inactiveTrackColor: Colors.grey[700],
+        value: switchValue,
+        onChanged: onSwitchChanged,
+        activeColor: activeColor,
       ),
-    );
-  }
+    ),
+  );
 }
