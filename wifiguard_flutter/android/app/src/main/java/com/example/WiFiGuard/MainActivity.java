@@ -18,6 +18,7 @@ import io.flutter.plugin.common.MethodChannel;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
+
 import android.net.wifi.ScanResult;
 
 import androidx.annotation.NonNull;
