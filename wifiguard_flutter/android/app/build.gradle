@@ -37,6 +37,10 @@ android {
             signingConfig = signingConfigs.debug
         }
     }
+
+    lintOptions {
+        disable 'ObsoleteLintCustomCheck', 'Deprecated'
+    }
 }
 
 flutter {
