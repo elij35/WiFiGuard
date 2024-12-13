@@ -15,7 +15,8 @@ Widget buildDashboardButton(BuildContext context,
 }
 
 // Settings layout
-Widget buildSettingTile(BuildContext context, {
+Widget buildSettingTile(
+  BuildContext context, {
   required String title,
   required String subtitle,
   required bool switchValue,
@@ -25,16 +26,10 @@ Widget buildSettingTile(BuildContext context, {
   return Card(
     margin: const EdgeInsets.symmetric(vertical: 8.0),
     child: ListTile(
-      title: Text(title, style: Theme
-          .of(context)
-          .textTheme
-          .bodyLarge),
+      title: Text(title, style: Theme.of(context).textTheme.bodyLarge),
       subtitle: Text(
         subtitle,
-        style: Theme
-            .of(context)
-            .textTheme
-            .bodyMedium,
+        style: Theme.of(context).textTheme.bodyMedium,
       ),
       trailing: Switch(
         value: switchValue,
@@ -74,14 +69,66 @@ class NetworkInfoRow extends StatelessWidget {
   }
 }
 
+// Connected devices screen for the top header tile displaying Wi-Fi name and device count
+Widget buildHeaderTile({
+  required BuildContext context,
+  required String wifiName,
+  required int deviceCount,
+}) {
+  return Card(
+    margin: const EdgeInsets.only(bottom: 16.0),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+    color: const Color(0xff00177c),
+    child: ListTile(
+      leading: const Icon(Icons.wifi, color: Colors.white),
+      title: Text(
+        'SSID: $wifiName',
+        style: const TextStyle(color: Colors.white, fontSize: 18.0),
+      ),
+      subtitle: Text(
+        '$deviceCount connected devices',
+        style: const TextStyle(color: Color(0xff00f16b)),
+      ),
+    ),
+  );
+}
+
+// Connected devices displaying the connected device's information
+Widget buildDeviceTile({
+  required BuildContext context,
+  required String deviceIp,
+  required VoidCallback onMoreInfo,
+}) {
+  return Card(
+    margin: const EdgeInsets.only(bottom: 8.0),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+    elevation: 4.0,
+    child: ListTile(
+      leading: const Icon(Icons.device_hub, color: Colors.teal),
+      title: Text(
+        'Device IP: $deviceIp',
+        style: Theme.of(context).textTheme.bodyLarge,
+      ),
+      trailing: ElevatedButton(
+        onPressed: onMoreInfo,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.teal,
+          foregroundColor: Colors.white,
+        ),
+        child: const Text('More Info'),
+      ),
+    ),
+  );
+}
+
 // Help and info layout
 Widget buildHelpTopicCard(
-    BuildContext context, {
-      required String title,
-      required String description,
-      required Color color,
-      required VoidCallback onTap,
-    }) {
+  BuildContext context, {
+  required String title,
+  required String description,
+  required Color color,
+  required VoidCallback onTap,
+}) {
   return GestureDetector(
     onTap: onTap,
     child: Container(
