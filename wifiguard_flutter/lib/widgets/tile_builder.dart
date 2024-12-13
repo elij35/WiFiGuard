@@ -1,13 +1,87 @@
 import 'package:flutter/material.dart';
 
+//Dashboard layout
+Widget buildDashboardButton(BuildContext context,
+    {required String label,
+    required IconData icon,
+    required VoidCallback onTap}) {
+  return Card(
+    child: ListTile(
+      leading: Icon(icon),
+      title: Text(label),
+      onTap: onTap,
+    ),
+  );
+}
+
+// Settings layout
+Widget buildSettingTile(BuildContext context, {
+  required String title,
+  required String subtitle,
+  required bool switchValue,
+  required ValueChanged<bool> onSwitchChanged,
+  required Color activeColor,
+}) {
+  return Card(
+    margin: const EdgeInsets.symmetric(vertical: 8.0),
+    child: ListTile(
+      title: Text(title, style: Theme
+          .of(context)
+          .textTheme
+          .bodyLarge),
+      subtitle: Text(
+        subtitle,
+        style: Theme
+            .of(context)
+            .textTheme
+            .bodyMedium,
+      ),
+      trailing: Switch(
+        value: switchValue,
+        onChanged: onSwitchChanged,
+        activeColor: activeColor,
+      ),
+    ),
+  );
+}
+
+//Network info row layout
+class NetworkInfoRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const NetworkInfoRow({
+    super.key,
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          Text(value),
+        ],
+      ),
+    );
+  }
+}
+
 // Help and info layout
 Widget buildHelpTopicCard(
-  BuildContext context, {
-  required String title,
-  required String description,
-  required Color color,
-  required VoidCallback onTap,
-}) {
+    BuildContext context, {
+      required String title,
+      required String description,
+      required Color color,
+      required VoidCallback onTap,
+    }) {
   return GestureDetector(
     onTap: onTap,
     child: Container(
@@ -44,80 +118,6 @@ Widget buildHelpTopicCard(
             ),
           ),
         ],
-      ),
-    ),
-  );
-}
-
-//Dashboard layout
-Widget buildDashboardButton(BuildContext context,
-    {required String label,
-    required IconData icon,
-    required VoidCallback onTap}) {
-  return Card(
-    child: ListTile(
-      leading: Icon(icon),
-      title: Text(label),
-      onTap: onTap,
-    ),
-  );
-}
-
-//Network info row layout
-class NetworkInfoRow extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const NetworkInfoRow({
-    super.key,
-    required this.label,
-    required this.value,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          Text(value),
-        ],
-      ),
-    );
-  }
-}
-
-// Settings layout
-Widget buildSettingTile(BuildContext context, {
-  required String title,
-  required String subtitle,
-  required bool switchValue,
-  required ValueChanged<bool> onSwitchChanged,
-  required Color activeColor,
-}) {
-  return Card(
-    margin: const EdgeInsets.symmetric(vertical: 8.0),
-    child: ListTile(
-      title: Text(title, style: Theme
-          .of(context)
-          .textTheme
-          .bodyLarge),
-      subtitle: Text(
-        subtitle,
-        style: Theme
-            .of(context)
-            .textTheme
-            .bodyMedium,
-      ),
-      trailing: Switch(
-        value: switchValue,
-        onChanged: onSwitchChanged,
-        activeColor: activeColor,
       ),
     ),
   );
