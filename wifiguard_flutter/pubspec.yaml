@@ -15,6 +15,9 @@ dependencies:
   dart_ping: ^9.0.1
   permission_handler: ^11.3.1
   cupertino_icons: ^1.0.8
+  speed_test_dart: ^1.0.5+0
+  syncfusion_flutter_gauges: ^28.1.37
+  shared_preferences: ^2.0.15
 
 dev_dependencies:
   flutter_launcher_icons: ^0.14.1
