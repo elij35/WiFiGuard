@@ -1,19 +1,32 @@
 import 'package:WiFiGuard/screens/dashboard/dashboard.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(WiFiGuardApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Load the saved theme mode from shared preferences
+  final themeMode = await _loadThemeMode();
+  runApp(WiFiGuardApp(themeMode: themeMode));
+}
+
+// Method to load the theme mode from SharedPreferences
+Future<ThemeMode> _loadThemeMode() async {
+  final prefs = await SharedPreferences.getInstance();
+  final isDarkMode =
+      prefs.getBool('isDarkMode') ?? false; // Default to light mode if not set
+  return isDarkMode ? ThemeMode.dark : ThemeMode.light;
 }
 
 class WiFiGuardApp extends StatelessWidget {
-  // Centralized theme mode state
-  final ValueNotifier<ThemeMode> themeModeNotifier =
-      ValueNotifier(ThemeMode.light);
+  final ThemeMode themeMode;
 
-  WiFiGuardApp({super.key});
+  const WiFiGuardApp({super.key, required this.themeMode});
 
   @override
   Widget build(BuildContext context) {
+    final themeModeNotifier =
+        ValueNotifier(themeMode);
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: themeModeNotifier,
       builder: (context, themeMode, _) {

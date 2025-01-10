@@ -1,5 +1,6 @@
 import 'package:WiFiGuard/widgets/tile_builder.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsScreen extends StatefulWidget {
   final ValueNotifier<ThemeMode> themeModeNotifier;
@@ -12,20 +13,47 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   late bool isDarkMode;
-  bool isNotificationsEnabled = false;
+  late bool isNotificationsEnabled;
 
   @override
   void initState() {
     super.initState();
+    // Set the initial theme mode based on the current theme in the app
     isDarkMode = widget.themeModeNotifier.value == ThemeMode.dark;
+    _loadSettings();
   }
 
-  void _toggleTheme(bool value) {
+  // Loads saved settings from SharedPreferences
+  Future<void> _loadSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isNotificationsEnabled = prefs.getBool('notificationsEnabled') ?? false;
+      // Load the saved dark mode setting
+      isDarkMode = prefs.getBool('isDarkMode') ??
+          (widget.themeModeNotifier.value == ThemeMode.dark);
+    });
+  }
+
+  // Toggles the app theme and saves it
+  void _toggleTheme(bool value) async {
     setState(() {
       isDarkMode = value;
       widget.themeModeNotifier.value =
           isDarkMode ? ThemeMode.dark : ThemeMode.light;
     });
+
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isDarkMode', isDarkMode); // Save the theme preference
+  }
+
+  // Toggles notifications and saves the setting
+  void _toggleNotifications(bool value) async {
+    setState(() {
+      isNotificationsEnabled = value;
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('notificationsEnabled', isNotificationsEnabled);
   }
 
   @override
@@ -33,7 +61,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     // Check if the current theme is dark or light
     final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
     final activeSwitchColor =
-        isDarkTheme ? Color(0xff1ab864) : Color(0xff008f4a);
+        isDarkTheme ? const Color(0xff1ab864) : const Color(0xff008f4a);
 
     return Scaffold(
       appBar: AppBar(
@@ -59,11 +87,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             title: 'Enable Notifications',
             subtitle: 'Receive notifications for network activity',
             switchValue: isNotificationsEnabled,
-            onSwitchChanged: (value) {
-              setState(() {
-                isNotificationsEnabled = value;
-              });
-            },
+            onSwitchChanged: _toggleNotifications,
             activeColor: activeSwitchColor,
           ),
         ],

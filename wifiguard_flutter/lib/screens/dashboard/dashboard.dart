@@ -1,15 +1,18 @@
 import 'package:WiFiGuard/screens/connected_devices/connected_devices.dart';
-import 'package:WiFiGuard/services/connected_devices_service.dart';
 import 'package:WiFiGuard/screens/help_and_guidance/help_and_info.dart';
 import 'package:WiFiGuard/screens/network_info/network_info.dart';
 import 'package:WiFiGuard/screens/settings/settings.dart';
+import 'package:WiFiGuard/services/connected_devices_service.dart';
 import 'package:WiFiGuard/widgets/tile_builder.dart';
 import 'package:flutter/material.dart';
 
 class DashboardScreen extends StatefulWidget {
   final ValueNotifier<ThemeMode> themeModeNotifier;
 
-  DashboardScreen({super.key, required this.themeModeNotifier});
+  const DashboardScreen({
+    super.key,
+    required this.themeModeNotifier,
+  });
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
@@ -17,7 +20,7 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   final ConnectedDevicesService _connectedDevicesService =
-  ConnectedDevicesService();
+      ConnectedDevicesService();
 
   String _wifiName = 'Unknown';
 
@@ -51,8 +54,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      SettingsScreen(themeModeNotifier: widget.themeModeNotifier),
+                  builder: (context) => SettingsScreen(
+                      themeModeNotifier: widget.themeModeNotifier),
                 ),
               );
             },
