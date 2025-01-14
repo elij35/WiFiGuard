@@ -18,6 +18,7 @@ dependencies:
   speed_test_dart: ^1.0.5+0
   syncfusion_flutter_gauges: ^28.1.37
   shared_preferences: ^2.0.15
+  flutter_local_notifications: ^18.0.1
 
 dev_dependencies:
   flutter_launcher_icons: ^0.14.1
