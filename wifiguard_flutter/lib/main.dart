@@ -25,8 +25,7 @@ class WiFiGuardApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeModeNotifier =
-        ValueNotifier(themeMode);
+    final themeModeNotifier = ValueNotifier(themeMode);
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: themeModeNotifier,
       builder: (context, themeMode, _) {
