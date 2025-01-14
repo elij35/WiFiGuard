@@ -38,7 +38,7 @@ android {
         }
     }
 
-    lintOptions {
+    lint {
         disable 'ObsoleteLintCustomCheck', 'Deprecated'
     }
 }
