@@ -15,6 +15,10 @@
     <!-- Allows background scanning when app isn't open -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    
     <application android:label="WiFiGuard">
         <activity
             android:name=".MainActivity"

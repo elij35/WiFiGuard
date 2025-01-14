@@ -3,6 +3,7 @@ import 'package:WiFiGuard/screens/help_and_guidance/help_and_info.dart';
 import 'package:WiFiGuard/screens/network_info/network_info.dart';
 import 'package:WiFiGuard/screens/settings/settings.dart';
 import 'package:WiFiGuard/services/connected_devices_service.dart';
+import 'package:WiFiGuard/services/permission_handler.dart';
 import 'package:WiFiGuard/widgets/tile_builder.dart';
 import 'package:flutter/material.dart';
 
@@ -28,6 +29,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
     _loadNetworkData();
+    requestPermissions(context);
   }
 
   Future<void> _loadNetworkData() async {
