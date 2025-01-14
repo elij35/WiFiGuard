@@ -63,7 +63,7 @@ public class MainActivity extends FlutterActivity {
 
     private Map<String, String> getNetworkInfo() {
         Map<String, String> networkInfo = new HashMap<>();
-        WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
         if (wifiManager != null) {
             WifiInfo wifiInfo = wifiManager.getConnectionInfo();
