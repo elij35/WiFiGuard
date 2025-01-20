@@ -1,5 +1,4 @@
 import 'package:WiFiGuard/services/connected_devices_service.dart';
-import 'package:WiFiGuard/widgets/tile_builder.dart';
 import 'package:flutter/material.dart';
 
 class ConnectedDevicesScreen extends StatefulWidget {
@@ -10,33 +9,45 @@ class ConnectedDevicesScreen extends StatefulWidget {
 }
 
 class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
-  final ConnectedDevicesService _connectedDevicesService =
-      ConnectedDevicesService();
+  final ConnectedDevicesService _devicesService = ConnectedDevicesService();
 
   List<Map<String, String>> _devices = [];
   String _wifiName = 'Unknown';
+  bool _isFirstLoad = true; // Ensures the first load is triggered only once
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _loadNetworkData();
+    if (_isFirstLoad) {
+      _loadDevices();
+    } else {
+      setState(() {
+        _isLoading = false; // Skip loading if already loaded
+      });
+    }
   }
 
-  Future<void> _loadNetworkData() async {
+  Future<void> _loadDevices() async {
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
-      // Fetch Wi-Fi name
-      final wifiName = await _connectedDevicesService.getWifiName();
+      final wifiName = await _devicesService.getWifiName();
+      final devices = await _devicesService.scanAndCategorizeDevices();
+
       setState(() {
         _wifiName = wifiName;
-      });
-
-      // Fetch connected devices
-      final devices = await _connectedDevicesService.scanNetwork();
-      setState(() {
         _devices = devices;
+        _isFirstLoad = false; // Mark the initial load as complete
+        _isLoading = false;
       });
     } catch (e) {
       print("Error loading network data: $e");
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -48,41 +59,52 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: _loadNetworkData, // Refresh the network data
+            onPressed: _loadDevices, // Refresh on button press
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header tile displaying Wi-Fi name and connected devices count
-            buildHeaderTile(
-              context: context,
-              wifiName: _wifiName,
-              deviceCount: _devices.length,
+      body: Column(
+        children: [
+          // Header displaying Wi-Fi name and connected devices count
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                Icon(Icons.wifi,
+                    size: 24, color: Theme.of(context).primaryColor),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Connected to: $_wifiName (${_devices.length} devices)',
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
             ),
-            // List of connected devices
-            Expanded(
-              child: _devices.isEmpty
-                  ? const Center(child: CircularProgressIndicator())
-                  : ListView.builder(
-                      itemCount: _devices.length,
-                      itemBuilder: (context, index) {
-                        final device = _devices[index];
-                        return buildDeviceTile(
-                          context: context,
-                          deviceIp: device['ip'] ?? 'Unknown',
-                          onMoreInfo: () {
-                            // Handle more info button tap
-                          },
-                        );
-                      },
-                    ),
-            ),
-          ],
-        ),
+          ),
+          const Divider(),
+          // Device List or Loading Indicator
+          Expanded(
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _devices.isEmpty
+                    ? const Center(child: Text('No devices found.'))
+                    : ListView.builder(
+                        itemCount: _devices.length,
+                        itemBuilder: (context, index) {
+                          final device = _devices[index];
+                          return Card(
+                            child: ListTile(
+                              title: Text('IP: ${device['ip']}'),
+                              subtitle: Text('MAC: ${device['mac']}'),
+                              trailing: const Icon(Icons.device_hub),
+                            ),
+                          );
+                        },
+                      ),
+          ),
+        ],
       ),
     );
   }
