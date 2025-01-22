@@ -1,8 +1,10 @@
 import 'package:dart_ping/dart_ping.dart';
+import 'package:flutter/services.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 
 class ConnectedDevicesService {
   final NetworkInfo _networkInfo = NetworkInfo();
+  static const platform = MethodChannel('com.example.network/info');
 
   // Cached data
   static String? cachedWifiName; // Cached Wi-Fi name
@@ -38,22 +40,28 @@ class ConnectedDevicesService {
 
       // Pings each IP and collects device info
       List<Future> pingFutures = [];
+      List<String> activeIps = []; // Stores active IPs for MAC address lookup
       for (int i = 1; i < 255; i++) {
         final ip = "$networkPrefix$i";
         pingFutures.add(_pingDevice(ip).then((isActive) {
           if (isActive) {
-            final mac =
-                _generateDummyMac(i); // Replace with actual MAC fetching logic
-            devices.add({
-              'ip': ip,
-              'mac': mac,
-              'status': 'Active',
-            });
+            activeIps.add(ip); // Add IP to the list of active IPs
           }
         }));
       }
 
       await Future.wait(pingFutures);
+
+      // Now, fetch the MAC addresses for the active IPs from the backend (using platform channel)
+      for (var ip in activeIps) {
+        final mac = await _getMacAddressFromBackend(ip) ?? 'Unknown';
+        devices.add({
+          'ip': ip,
+          'mac': mac,
+          'status': mac.isNotEmpty ? 'Active' : 'Inactive',
+        });
+      }
+
       cachedDevices = devices; // Cache the scanned devices
     } catch (e) {
       print("Error scanning network: $e");
@@ -68,15 +76,27 @@ class ConnectedDevicesService {
     cachedDevices = [];
   }
 
-  // Dummy MAC generator (this will be replaced with real MAC fetching)
-  String _generateDummyMac(int index) {
-    return '00:1A:${index.toRadixString(16).padLeft(2, '0')}:FF:FF:FF';
-  }
-
   // Pings a device and checks if it's active
   Future<bool> _pingDevice(String ip) async {
     final ping = Ping(ip, count: 1);
     final response = await ping.stream.first;
     return response.response != null;
+  }
+
+  // Fetches the MAC address of a given IP address from the backend via platform channel
+  Future<String?> _getMacAddressFromBackend(String ipAddr) async {
+    try {
+      if (ipAddr == null || ipAddr.isEmpty) {
+        print("IP address is null or empty");
+        return null;
+      }
+
+      final macAddress =
+          await platform.invokeMethod('getMacAddress', {'ipAddr': ipAddr});
+      return macAddress;
+    } on PlatformException catch (e) {
+      print("Error fetching MAC address for $ipAddr: ${e.message}");
+      return null;
+    }
   }
 }
