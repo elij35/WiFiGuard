@@ -14,6 +14,8 @@ import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodChannel;
 
+import com.example.WiFiGuard.utils.ArpFetcher;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,15 +31,29 @@ public class MainActivity extends FlutterActivity {
         super.configureFlutterEngine(flutterEngine);
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), CHANNEL)
                 .setMethodCallHandler((call, result) -> {
-                    if ("getNetworkInfo".equals(call.method)) {
-                        if (checkPermissions()) {
-                            result.success(getNetworkInfo());
-                        } else {
-                            requestPermissions();
-                            result.error("PERMISSION_DENIED", "Location permission is required", null);
-                        }
-                    } else {
-                        result.notImplemented();
+                    switch (call.method) {
+                        case "getNetworkInfo":
+                            if (checkPermissions()) result.success(getNetworkInfo());
+                            else {
+                                requestPermissions();
+                                result.error("PERMISSION_DENIED", "Location permission is required", null);
+                            }
+                            break;
+
+                        case "getMacAddress":
+                            String ip = call.argument("ipAddr");
+                            if (ip != null && !ip.isEmpty())
+                                result.success(ArpFetcher.getMacAddress(ip));
+                            else result.error("INVALID_ARGUMENT", "IP address is required", null);
+                            break;
+
+                        case "getAllDevices":
+                            result.success(ArpFetcher.getAllDevices());
+                            break;
+
+                        default:
+                            result.notImplemented();
+                            break;
                     }
                 });
     }
