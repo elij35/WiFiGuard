@@ -47,6 +47,12 @@ android {
     lint {
         disable 'ObsoleteLintCustomCheck', 'Deprecated'
     }
+
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+        }
+    }
 }
 
 flutter {
