@@ -1,5 +1,4 @@
 import 'package:WiFiGuard/services/network_info_service.dart';
-import 'package:WiFiGuard/widgets/tile_builder.dart';
 import 'package:flutter/material.dart';
 
 class NetworkInfoScreen extends StatefulWidget {
@@ -31,36 +30,133 @@ class NetworkInfoScreenState extends State<NetworkInfoScreen> {
       _wifiName = networkInfo['ssid'] ?? 'Unknown';
       _wifiBSSID = networkInfo['bssid'] ?? 'Unknown';
       _wifiIP = networkInfo['ip'] ?? 'Unknown';
-      _wifiSignal = networkInfo['signalStrength'] ?? 'Unknown';
-      _wifiFrequency = networkInfo['frequency'] ?? 'Unknown';
+      _wifiSignal = _convertSignalToWords(networkInfo['signalStrength']);
+      _wifiFrequency = _convertFrequencyToBand(networkInfo['frequency']);
       _wifiSecurity = networkInfo['security'] ?? 'Unknown';
     });
+  }
+
+  //Converts signal int to words
+  String _convertSignalToWords(String? signalStrength) {
+    if (signalStrength == null || signalStrength == 'Unknown') return 'Unknown';
+    final strength = int.tryParse(signalStrength) ?? 0;
+
+    if (strength >= -50) {
+      return 'Excellent';
+    } else if (strength >= -60) {
+      return 'Good';
+    } else if (strength >= -70) {
+      return 'Fair';
+    } else {
+      return 'Weak';
+    }
+  }
+
+  //Converts frequency to either 2.4 or 5GHz
+  String _convertFrequencyToBand(String? frequency) {
+    if (frequency == null || frequency == 'Unknown') return 'Unknown';
+    final freq = int.tryParse(frequency.replaceAll(' MHz', '')) ?? 0;
+
+    if (freq < 2500) {
+      return '2.4 GHz';
+    } else if (freq > 2500) {
+      return '5 GHz';
+    } else {
+      return 'Unknown';
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Network Information')),
+      appBar: AppBar(
+        title: const Text('Network Information'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _fetchNetworkInfo,
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: ListView(
           children: [
-            NetworkInfoRow(label: 'SSID', value: _wifiName),
-            const Divider(color: Colors.grey),
-            NetworkInfoRow(label: 'Signal', value: _wifiSignal),
-            const Divider(color: Colors.grey),
-            NetworkInfoRow(label: 'IP Address', value: _wifiIP),
-            const Divider(color: Colors.grey),
-            NetworkInfoRow(label: 'MAC Address', value: _wifiBSSID),
-            const Divider(color: Colors.grey),
-            NetworkInfoRow(label: 'Frequency', value: _wifiFrequency),
-            const Divider(color: Colors.grey),
-            NetworkInfoRow(label: 'Security Protocol', value: _wifiSecurity),
-            const Divider(color: Colors.grey),
+            // Wi-Fi Details Section
+            _buildSectionHeader('Wi-Fi Details'),
+            _buildInfoRow(Icons.wifi, 'Wi-Fi Name', _wifiName),
+            _buildInfoRow(
+                Icons.signal_cellular_alt, 'Signal Strength', _wifiSignal),
+            _buildInfoRow(Icons.language, 'IP Address', _wifiIP),
+            _buildInfoRow(Icons.devices, 'Wi-Fi MAC Address', _wifiBSSID),
+
+            const SizedBox(height: 16.0),
+
+            // Frequency and Security Section
+            _buildSectionHeader('Network Security'),
+            _buildInfoRow(Icons.wifi_tethering, 'Frequency', _wifiFrequency),
+            _buildInfoRow(
+              Icons.security,
+              'Security Protocol',
+              _wifiSecurity,
+              subtitle: _getSecurityExplanation(_wifiSecurity),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(IconData icon, String label, String value,
+      {String? subtitle}) {
+    return Card(
+      elevation: 4.0,
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      child: ListTile(
+        leading: Icon(icon, color: Theme.of(context).primaryColor),
+        title: Text(label),
+        subtitle: subtitle != null
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(value),
+                  const SizedBox(height: 4.0),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(fontSize: 12.0, color: Colors.grey),
+                  ),
+                ],
+              )
+            : Text(value),
+      ),
+    );
+  }
+
+  String? _getSecurityExplanation(String security) {
+    switch (security) {
+      case 'WPA3':
+        return 'WPA3 provides the latest security for your network.';
+      case 'WPA2':
+        return 'WPA2 is secure but consider upgrading to WPA3.';
+      case 'WEP':
+        return 'WEP is outdated and insecure. Upgrade your router settings.';
+      case 'Open/No Security':
+        return 'This network is not secure. Avoid sensitive activities.';
+      default:
+        return null;
+    }
   }
 }
