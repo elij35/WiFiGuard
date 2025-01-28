@@ -131,11 +131,17 @@ class NetworkInfoScreenState extends State<NetworkInfoScreen> {
 
   Widget _buildInfoRow(IconData icon, String label, String value,
       {String? subtitle}) {
+    final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
+    final iconColor = isDarkTheme
+        ? Theme.of(context).colorScheme.secondary // Bright color for dark theme
+        : Theme.of(context)
+            .primaryColor; // Default primary color for light theme
+
     return Card(
       elevation: 4.0,
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: ListTile(
-        leading: Icon(icon, color: Theme.of(context).primaryColor),
+        leading: Icon(icon, color: iconColor),
         title: Text(label),
         subtitle: subtitle != null
             ? Column(

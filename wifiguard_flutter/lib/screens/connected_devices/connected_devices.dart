@@ -145,14 +145,20 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, {String? subtitle}) {
+    final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
+    final iconColor = isDarkTheme
+        ? Theme.of(context).colorScheme.secondary // Bright color for dark theme
+        : Theme.of(context)
+            .primaryColor; // Default primary color for light theme
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Connected Devices'),
         actions: [
           if (_hasScannedBefore)
             IconButton(
-              icon: const Icon(Icons.refresh),
+              icon: Icon(Icons.refresh, color: iconColor),
               onPressed: () => _showWarningDialogs(),
             ),
         ],
@@ -166,8 +172,7 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
                       padding: const EdgeInsets.all(16.0),
                       child: Row(
                         children: [
-                          Icon(Icons.wifi,
-                              size: 24, color: Theme.of(context).primaryColor),
+                          Icon(Icons.wifi, size: 24, color: iconColor),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
@@ -191,7 +196,8 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
                                   child: ListTile(
                                     title: Text('IP: ${device['ip']}'),
                                     subtitle: Text('MAC: ${device['mac']}'),
-                                    trailing: const Icon(Icons.device_hub),
+                                    trailing: Icon(Icons.device_hub,
+                                        color: iconColor),
                                   ),
                                 );
                               },
