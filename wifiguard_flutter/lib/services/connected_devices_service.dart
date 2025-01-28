@@ -40,7 +40,8 @@ class ConnectedDevicesService {
 
       // Pings each IP and collects device info
       List<Future> pingFutures = [];
-      List<String> activeIps = []; // Stores active IPs for MAC address lookup
+      List<String> activeIps = [];
+
       for (int i = 1; i < 255; i++) {
         final ip = "$networkPrefix$i";
         pingFutures.add(_pingDevice(ip).then((isActive) {
@@ -52,7 +53,6 @@ class ConnectedDevicesService {
 
       await Future.wait(pingFutures);
 
-      // Now, fetch the MAC addresses for the active IPs from the backend (using platform channel)
       for (var ip in activeIps) {
         final mac = await _getMacAddressFromBackend(ip) ?? 'Unknown';
         devices.add({
@@ -62,7 +62,7 @@ class ConnectedDevicesService {
         });
       }
 
-      cachedDevices = devices; // Cache the scanned devices
+      cachedDevices = devices;
     } catch (e) {
       print("Error scanning network: $e");
     }
@@ -70,13 +70,6 @@ class ConnectedDevicesService {
     return devices;
   }
 
-  // Clears the cached data for Wi-Fi name and devices
-  void clearCache() {
-    cachedWifiName = null;
-    cachedDevices = [];
-  }
-
-  // Pings a device and checks if it's active
   Future<bool> _pingDevice(String ip) async {
     final ping = Ping(ip, count: 1);
     final response = await ping.stream.first;
@@ -86,10 +79,7 @@ class ConnectedDevicesService {
   // Fetches the MAC address of a given IP address from the backend via platform channel
   Future<String?> _getMacAddressFromBackend(String ipAddr) async {
     try {
-      if (ipAddr == null || ipAddr.isEmpty) {
-        print("IP address is null or empty");
-        return null;
-      }
+      if (ipAddr.isEmpty) return null;
 
       final macAddress =
           await platform.invokeMethod('getMacAddress', {'ipAddr': ipAddr});
