@@ -78,30 +78,34 @@ class NetworkInfoScreenState extends State<NetworkInfoScreen> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-            // Wi-Fi Details Section
-            _buildSectionHeader('Wi-Fi Details'),
-            _buildInfoRow(Icons.wifi, 'Wi-Fi Name', _wifiName),
-            _buildInfoRow(
-                Icons.signal_cellular_alt, 'Signal Strength', _wifiSignal),
-            _buildInfoRow(Icons.language, 'IP Address', _wifiIP),
-            _buildInfoRow(Icons.devices, 'Wi-Fi MAC Address', _wifiBSSID),
+      body: RefreshIndicator(
+        key: _refreshIndicatorKey,
+        onRefresh: _fetchNetworkInfo,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ListView(
+            children: [
+              // Wi-Fi Details Section
+              _buildSectionHeader('Wi-Fi Details'),
+              _buildInfoRow(Icons.wifi, 'Wi-Fi Name', _wifiName),
+              _buildInfoRow(
+                  Icons.signal_cellular_alt, 'Signal Strength', _wifiSignal),
+              _buildInfoRow(Icons.language, 'IP Address', _wifiIP),
+              _buildInfoRow(Icons.devices, 'Wi-Fi MAC Address', _wifiBSSID),
 
-            const SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
 
-            // Frequency and Security Section
-            _buildSectionHeader('Network Security'),
-            _buildInfoRow(Icons.wifi_tethering, 'Frequency', _wifiFrequency),
-            _buildInfoRow(
-              Icons.security,
-              'Security Protocol',
-              _wifiSecurity,
-              subtitle: _getSecurityExplanation(_wifiSecurity),
-            ),
-          ],
+              // Frequency and Security Section
+              _buildSectionHeader('Network Security'),
+              _buildInfoRow(Icons.wifi_tethering, 'Frequency', _wifiFrequency),
+              _buildInfoRow(
+                Icons.security,
+                'Security Protocol',
+                _wifiSecurity,
+                subtitle: _getSecurityExplanation(_wifiSecurity),
+              ),
+            ],
+          ),
         ),
       ),
     );
