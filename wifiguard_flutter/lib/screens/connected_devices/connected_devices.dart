@@ -1,5 +1,7 @@
 import 'package:WiFiGuard/services/connected_devices_service.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class ConnectedDevicesScreen extends StatefulWidget {
   const ConnectedDevicesScreen({super.key});
@@ -13,22 +15,61 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
 
   List<Map<String, String>> _devices = [];
   String _wifiName = 'Unknown';
-  bool _isFirstLoad = true; // Ensures the first load is triggered only once
   bool _isLoading = true;
+  bool _hasScannedBefore = false;
 
   @override
   void initState() {
     super.initState();
-    if (_isFirstLoad) {
-      _loadDevices();
+    _loadInitialState();
+  }
+
+  Future<void> _loadInitialState() async {
+    await _checkScanStatus();
+    if (_hasScannedBefore) {
+      await _loadCachedDevices();
     } else {
       setState(() {
-        _isLoading = false; // Skip loading if already loaded
+        _isLoading = false;
       });
     }
   }
 
-  Future<void> _loadDevices() async {
+  Future<void> _checkScanStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _hasScannedBefore = prefs.getBool('hasScannedBefore') ?? false;
+    });
+  }
+
+  Future<void> _loadCachedDevices() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final cachedDevicesString = prefs.getString('cachedDevices') ?? '[]';
+      final List<dynamic> cachedDevicesJson = jsonDecode(cachedDevicesString);
+
+      final List<Map<String, String>> cachedDevices =
+          cachedDevicesJson.map((e) => Map<String, String>.from(e)).toList();
+
+      final wifiName = await _devicesService.getWifiName();
+      setState(() {
+        _wifiName = wifiName;
+        _devices = cachedDevices;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print("Error loading cached devices: $e");
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _runNetworkScan() async {
     setState(() {
       _isLoading = true;
     });
@@ -40,14 +81,66 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
       setState(() {
         _wifiName = wifiName;
         _devices = devices;
-        _isFirstLoad = false; // Mark the initial load as complete
         _isLoading = false;
+        _hasScannedBefore = true;
       });
+
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setBool('hasScannedBefore', true);
+      prefs.setString('cachedDevices', jsonEncode(devices));
     } catch (e) {
-      print("Error loading network data: $e");
+      print("Error running network scan: $e");
       setState(() {
         _isLoading = false;
       });
+    }
+  }
+
+  Future<void> _showWarningDialogs() async {
+    final firstWarning = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Network Scan Warning'),
+        content: const Text(
+          'Scanning your network may take a few moments. Do you want to proceed?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Proceed'),
+          ),
+        ],
+      ),
+    );
+
+    if (firstWarning == true) {
+      final secondWarning = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Confirm Scan'),
+          content: const Text(
+            'Are you sure you want to scan your network? This action cannot be undone.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Confirm'),
+            ),
+          ],
+        ),
+      );
+
+      if (secondWarning == true) {
+        await _runNetworkScan();
+      }
     }
   }
 
@@ -57,55 +150,61 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
       appBar: AppBar(
         title: const Text('Connected Devices'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _loadDevices, // Refresh on button press
-          ),
+          if (_hasScannedBefore)
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: () => _showWarningDialogs(),
+            ),
         ],
       ),
-      body: Column(
-        children: [
-          // Header displaying Wi-Fi name and connected devices count
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                Icon(Icons.wifi,
-                    size: 24, color: Theme.of(context).primaryColor),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'Connected to: $_wifiName (${_devices.length} devices)',
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _hasScannedBefore
+              ? Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        children: [
+                          Icon(Icons.wifi,
+                              size: 24, color: Theme.of(context).primaryColor),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Connected to: $_wifiName (${_devices.length} devices)',
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Divider(),
+                    Expanded(
+                      child: _devices.isEmpty
+                          ? const Center(child: Text('No devices found.'))
+                          : ListView.builder(
+                              itemCount: _devices.length,
+                              itemBuilder: (context, index) {
+                                final device = _devices[index];
+                                return Card(
+                                  child: ListTile(
+                                    title: Text('IP: ${device['ip']}'),
+                                    subtitle: Text('MAC: ${device['mac']}'),
+                                    trailing: const Icon(Icons.device_hub),
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
+                  ],
+                )
+              : Center(
+                  child: ElevatedButton(
+                    onPressed: () => _showWarningDialogs(),
+                    child: const Text('Start Network Scan'),
                   ),
                 ),
-              ],
-            ),
-          ),
-          const Divider(),
-          // Device List or Loading Indicator
-          Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : _devices.isEmpty
-                    ? const Center(child: Text('No devices found.'))
-                    : ListView.builder(
-                        itemCount: _devices.length,
-                        itemBuilder: (context, index) {
-                          final device = _devices[index];
-                          return Card(
-                            child: ListTile(
-                              title: Text('IP: ${device['ip']}'),
-                              subtitle: Text('MAC: ${device['mac']}'),
-                              trailing: const Icon(Icons.device_hub),
-                            ),
-                          );
-                        },
-                      ),
-          ),
-        ],
-      ),
     );
   }
 }
