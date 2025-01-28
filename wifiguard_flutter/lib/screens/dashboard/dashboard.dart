@@ -1,5 +1,5 @@
 import 'package:WiFiGuard/screens/connected_devices/connected_devices.dart';
-import 'package:WiFiGuard/screens/help_and_guidance/help_and_info.dart';
+import 'package:WiFiGuard/screens/help_and_guidance/help_and_guidance.dart';
 import 'package:WiFiGuard/screens/network_info/network_info.dart';
 import 'package:WiFiGuard/screens/settings/settings.dart';
 import 'package:WiFiGuard/services/connected_devices_service.dart';
@@ -126,7 +126,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const HelpAndInfoScreen(),
+                    builder: (context) => const HelpAndGuidanceScreen(),
                   ),
                 );
               },
