@@ -10,6 +10,8 @@ class NetworkInfoScreen extends StatefulWidget {
 
 class NetworkInfoScreenState extends State<NetworkInfoScreen> {
   final NetworkService _networkService = NetworkService();
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
 
   String _wifiName = 'Unknown';
   String _wifiBSSID = 'Unknown';
@@ -36,7 +38,7 @@ class NetworkInfoScreenState extends State<NetworkInfoScreen> {
     });
   }
 
-  //Converts signal int to words
+  // Converts signal int to words
   String _convertSignalToWords(String? signalStrength) {
     if (signalStrength == null || signalStrength == 'Unknown') return 'Unknown';
     final strength = int.tryParse(signalStrength) ?? 0;
@@ -52,7 +54,7 @@ class NetworkInfoScreenState extends State<NetworkInfoScreen> {
     }
   }
 
-  //Converts frequency to either 2.4 or 5GHz
+  // Converts frequency to either 2.4 or 5GHz
   String _convertFrequencyToBand(String? frequency) {
     if (frequency == null || frequency == 'Unknown') return 'Unknown';
     final freq = int.tryParse(frequency.replaceAll(' MHz', '')) ?? 0;
@@ -74,7 +76,10 @@ class NetworkInfoScreenState extends State<NetworkInfoScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: _fetchNetworkInfo,
+            onPressed: () {
+              // Trigger the RefreshIndicator
+              _refreshIndicatorKey.currentState?.show();
+            },
           ),
         ],
       ),
