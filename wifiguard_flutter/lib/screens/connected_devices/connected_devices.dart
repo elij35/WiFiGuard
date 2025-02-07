@@ -1,7 +1,8 @@
+import 'dart:convert';
+
 import 'package:WiFiGuard/services/connected_devices_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 
 class ConnectedDevicesScreen extends StatefulWidget {
   const ConnectedDevicesScreen({super.key});
