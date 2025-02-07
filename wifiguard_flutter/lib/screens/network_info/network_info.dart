@@ -163,13 +163,13 @@ class NetworkInfoScreenState extends State<NetworkInfoScreen> {
   String? _getSecurityExplanation(String security) {
     switch (security) {
       case 'WPA3':
-        return 'WPA3 provides the latest security for your network.';
+        return 'Very secure, no action required';
       case 'WPA2':
-        return 'WPA2 is secure but consider upgrading to WPA3.';
+        return 'Secure, no action required';
       case 'WEP':
         return 'WEP is outdated and insecure. Upgrade your router settings.';
       case 'Open/No Security':
-        return 'This network is not secure. Avoid sensitive activities.';
+        return 'This network is not secure. Strongly recommended to add a password to the network!';
       default:
         return null;
     }
