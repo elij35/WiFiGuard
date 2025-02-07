@@ -20,7 +20,7 @@ public abstract class ExecuteAsRootBase {
             os.writeBytes("exit\n");
             os.flush();
             suProcess.waitFor();
-            return currUid != null && currUid.contains("uid=0");
+            return currUid != null && currUid.contains("uid=0"); // Check if UID is root
         } catch (Exception e) {
             return false;
         }

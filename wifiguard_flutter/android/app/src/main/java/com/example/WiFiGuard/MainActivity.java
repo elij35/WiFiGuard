@@ -48,7 +48,8 @@ public class MainActivity extends FlutterActivity {
                             break;
 
                         case "getAllDevices":
-                            result.success(ArpFetcher.getAllDevices());
+                            List<String[]> devices = ArpFetcher.getAllDevices();
+                            result.success(devices);
                             break;
 
                         default:
