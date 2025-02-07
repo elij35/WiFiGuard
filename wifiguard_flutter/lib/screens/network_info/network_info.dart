@@ -1,4 +1,5 @@
 import 'package:WiFiGuard/services/network_info_service.dart';
+import 'package:WiFiGuard/services/notification_service.dart';
 import 'package:flutter/material.dart';
 
 class NetworkInfoScreen extends StatefulWidget {
@@ -36,6 +37,18 @@ class NetworkInfoScreenState extends State<NetworkInfoScreen> {
       _wifiFrequency = _convertFrequencyToBand(networkInfo['frequency']);
       _wifiSecurity = networkInfo['security'] ?? 'Unknown';
     });
+
+    // Check for insecure network and send a notification
+    if (_wifiSecurity == 'WEP' || _wifiSecurity == 'Open/No Security') {
+      _sendInsecureNetworkNotification();
+    }
+  }
+
+  void _sendInsecureNetworkNotification() {
+    NotificationService().showNotification(
+      'Insecure Wi-Fi Detected',
+      'The connected network $_wifiName uses $_wifiSecurity, which is insecure!',
+    );
   }
 
   // Converts signal int to words
@@ -133,9 +146,8 @@ class NetworkInfoScreenState extends State<NetworkInfoScreen> {
       {String? subtitle}) {
     final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
     final iconColor = isDarkTheme
-        ? Theme.of(context).colorScheme.secondary // Bright color for dark theme
-        : Theme.of(context)
-            .primaryColor; // Default primary color for light theme
+        ? Theme.of(context).colorScheme.secondary
+        : Theme.of(context).primaryColor;
 
     return Card(
       elevation: 4.0,
