@@ -134,6 +134,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_foreground_task:
+    dependency: "direct main"
+    description:
+      name: flutter_foreground_task
+      sha256: "206017ee1bf864f34b8d7bce664a172717caa21af8da23f55866470dfe316644"
+      url: "https://pub.dev"
+    source: hosted
+    version: "8.17.0"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -212,10 +220,10 @@ packages:
     dependency: transitive
     description:
       name: intl
-      sha256: "00f33b908655e606b86d2ade4710a231b802eec6f11e87e4ea3783fd72077a50"
+      sha256: "3df61194eb431efc39c4ceba583b95633a403f46c9fd341e550ce0bfa50e9aa5"
       url: "https://pub.dev"
     source: hosted
-    version: "0.20.1"
+    version: "0.20.2"
   json_annotation:
     dependency: transitive
     description:
@@ -420,18 +428,18 @@ packages:
     dependency: "direct main"
     description:
       name: shared_preferences
-      sha256: a752ce92ea7540fc35a0d19722816e04d0e72828a4200e83a98cf1a1eb524c9a
+      sha256: "688ee90fbfb6989c980254a56cb26ebe9bb30a3a2dff439a78894211f73de67a"
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.5"
+    version: "2.5.1"
   shared_preferences_android:
     dependency: transitive
     description:
       name: shared_preferences_android
-      sha256: "138b7bbbc7f59c56236e426c37afb8f78cbc57b094ac64c440e0bb90e380a4f5"
+      sha256: "650584dcc0a39856f369782874e562efd002a9c94aec032412c9eb81419cce1f"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.2"
+    version: "2.4.4"
   shared_preferences_foundation:
     dependency: transitive
     description:
@@ -529,18 +537,18 @@ packages:
     dependency: transitive
     description:
       name: syncfusion_flutter_core
-      sha256: "324e6d370de025e5594c60fa60665efa700f34009c2b7859d05e843c357cd5c8"
+      sha256: "3c1876b0a245de23de3b17a19e3106fed57d88f4fd2c8dc9bc1976705b1c31d5"
       url: "https://pub.dev"
     source: hosted
-    version: "28.1.41"
+    version: "28.2.4"
   syncfusion_flutter_gauges:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_gauges
-      sha256: "93f4abd9ce0178879588508aaed1db023eb05cefb2e5ecb39764e7cc876be65d"
+      sha256: "69936ffbda605685108665f93ba827ec10829b4cbe0b87cdfdb94c5336db8a1d"
       url: "https://pub.dev"
     source: hosted
-    version: "28.1.41"
+    version: "28.2.4"
   term_glyph:
     dependency: transitive
     description:
@@ -601,10 +609,10 @@ packages:
     dependency: transitive
     description:
       name: win32
-      sha256: "154360849a56b7b67331c21f09a386562d88903f90a1099c5987afc1912e1f29"
+      sha256: daf97c9d80197ed7b619040e86c8ab9a9dad285e7671ee7390f9180cc828a51e
       url: "https://pub.dev"
     source: hosted
-    version: "5.10.0"
+    version: "5.10.1"
   xdg_directories:
     dependency: transitive
     description:
