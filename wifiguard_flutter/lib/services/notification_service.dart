@@ -1,31 +1,30 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationService {
-  static final NotificationService _instance = NotificationService._internal();
-
-  factory NotificationService() {
-    return _instance;
-  }
-
-  NotificationService._internal();
-
   final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
+  NotificationService() {
+    initializeNotifications();
+  }
+
   Future<void> initializeNotifications() async {
-    const AndroidInitializationSettings androidSettings =
+    const androidSettings =
         AndroidInitializationSettings('@mipmap/ic_launcher');
-
-    const InitializationSettings initSettings = InitializationSettings(
-      android: androidSettings,
-    );
-
+    const initSettings = InitializationSettings(android: androidSettings);
     await _notificationsPlugin.initialize(initSettings);
   }
 
   Future<void> showNotification(String title, String body) async {
-    const AndroidNotificationDetails androidDetails =
-        AndroidNotificationDetails(
+    final prefs = await SharedPreferences.getInstance();
+    bool isEnabled =
+        prefs.getBool('notificationsEnabled') ?? true; // Correct preference key
+
+    if (!isEnabled)
+      return; // Don't send notification if notifications are disabled
+
+    const androidDetails = AndroidNotificationDetails(
       'wifi_guard_channel',
       'Wi-Fi Guard',
       channelDescription: 'Notifications for Wi-Fi Guard',
@@ -33,14 +32,10 @@ class NotificationService {
       priority: Priority.high,
     );
 
-    const NotificationDetails notificationDetails = NotificationDetails(
-      android: androidDetails,
-    );
-
+    const notificationDetails = NotificationDetails(android: androidDetails);
     await _notificationsPlugin.show(0, title, body, notificationDetails);
   }
 
-  // Added function to cancel all notifications
   Future<void> cancelAllNotifications() async {
     await _notificationsPlugin.cancelAll();
   }

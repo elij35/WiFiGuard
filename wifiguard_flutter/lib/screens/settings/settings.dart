@@ -29,11 +29,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() {
       isNotificationsEnabled =
           prefs.getBool('notificationsEnabled') ?? true; // Default to true
-      isDarkMode = prefs.getBool('isDarkMode') ??
-          (widget.themeModeNotifier.value == ThemeMode.dark);
+      isDarkMode = prefs.getBool('isDarkMode') ?? isDarkMode;
     });
 
-    // Enable notifications if they are on
+    // Initialize notifications if they are enabled
     if (isNotificationsEnabled) {
       NotificationService().initializeNotifications();
     }
@@ -74,13 +73,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         isDarkTheme ? const Color(0xff1ab864) : const Color(0xff008f4a);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
-      ),
+      appBar: AppBar(title: const Text('Settings')),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
-          // Dark Mode Toggle
           buildSettingTile(
             context,
             title: 'Dark Mode',
@@ -90,8 +86,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             activeColor: activeSwitchColor,
           ),
           const Divider(color: Colors.grey),
-
-          // Notifications Toggle
           buildSettingTile(
             context,
             title: 'Enable Notifications',
