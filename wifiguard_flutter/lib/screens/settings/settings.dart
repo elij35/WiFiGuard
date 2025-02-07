@@ -23,12 +23,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _loadSettings();
   }
 
-  // Loads saved settings from SharedPreferences
+  // Load settings from SharedPreferences
   Future<void> _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      isNotificationsEnabled = prefs.getBool('notificationsEnabled') ?? false;
-      // Load the saved dark mode setting
+      isNotificationsEnabled =
+          prefs.getBool('notificationsEnabled') ?? true; // Default to true
       isDarkMode = prefs.getBool('isDarkMode') ??
           (widget.themeModeNotifier.value == ThemeMode.dark);
     });
