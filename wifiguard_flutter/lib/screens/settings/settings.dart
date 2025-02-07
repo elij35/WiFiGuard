@@ -1,3 +1,4 @@
+import 'package:WiFiGuard/services/notification_service.dart';
 import 'package:WiFiGuard/widgets/tile_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,7 +19,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
-    // Set the initial theme mode based on the current theme in the app
     isDarkMode = widget.themeModeNotifier.value == ThemeMode.dark;
     _loadSettings();
   }
@@ -32,9 +32,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
       isDarkMode = prefs.getBool('isDarkMode') ??
           (widget.themeModeNotifier.value == ThemeMode.dark);
     });
+
+    // Enable notifications if they are on
+    if (isNotificationsEnabled) {
+      NotificationService().initializeNotifications();
+    }
   }
 
-  // Toggles the app theme and saves it
+  // Toggle theme mode
   void _toggleTheme(bool value) async {
     setState(() {
       isDarkMode = value;
@@ -43,10 +48,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
 
     final prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isDarkMode', isDarkMode); // Save the theme preference
+    prefs.setBool('isDarkMode', isDarkMode);
   }
 
-  // Toggles notifications and saves the setting
+  // Toggle notifications
   void _toggleNotifications(bool value) async {
     setState(() {
       isNotificationsEnabled = value;
@@ -54,11 +59,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     final prefs = await SharedPreferences.getInstance();
     prefs.setBool('notificationsEnabled', isNotificationsEnabled);
+
+    if (isNotificationsEnabled) {
+      NotificationService().initializeNotifications(); // Enable notifications
+    } else {
+      NotificationService().cancelAllNotifications(); // Disable notifications
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Check if the current theme is dark or light
     final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
     final activeSwitchColor =
         isDarkTheme ? const Color(0xff1ab864) : const Color(0xff008f4a);

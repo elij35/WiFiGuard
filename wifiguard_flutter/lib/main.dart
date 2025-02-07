@@ -1,9 +1,13 @@
 import 'package:WiFiGuard/screens/dashboard/dashboard.dart';
+import 'package:WiFiGuard/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize notifications when app starts
+  await NotificationService().initializeNotifications();
 
   // Load the saved theme mode from shared preferences
   final themeMode = await _loadThemeMode();
