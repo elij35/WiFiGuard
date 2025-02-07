@@ -27,6 +27,11 @@
         android:allowBackup="true"
         android:usesCleartextTraffic="true"
 
+        <service
+            android:name="com.your_package_name.WifiMonitorService"
+            android:foregroundServiceType="location"
+            android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">

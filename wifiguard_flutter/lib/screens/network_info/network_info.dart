@@ -38,9 +38,13 @@ class NetworkInfoScreenState extends State<NetworkInfoScreen> {
       _wifiSecurity = networkInfo['security'] ?? 'Unknown';
     });
 
-    // Check for insecure network and send a notification
+    // Send notification if the network is insecure
     if (_wifiSecurity == 'WEP' || _wifiSecurity == 'Open/No Security') {
-      _sendInsecureNetworkNotification();
+      final notificationService = NotificationService();
+      await notificationService.showNotification(
+        '⚠️ Insecure Wi-Fi Detected',
+        'Your current network is using $_wifiSecurity security.',
+      );
     }
   }
 

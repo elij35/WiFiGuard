@@ -2,6 +2,7 @@ import 'package:WiFiGuard/screens/dashboard/dashboard.dart';
 import 'package:WiFiGuard/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:WiFiGuard/services/wifi_monitor_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,6 +12,7 @@ void main() async {
 
   // Load the saved theme mode from shared preferences
   final themeMode = await _loadThemeMode();
+  WifiMonitorService().startMonitoring(); // Start Wi-Fi background scan
   runApp(WiFiGuardApp(themeMode: themeMode));
 }
 
