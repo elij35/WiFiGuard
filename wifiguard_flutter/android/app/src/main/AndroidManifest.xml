@@ -22,17 +22,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-    <application
-        android:icon="@mipmap/ic_launcher"
-        android:label="WiFiGuard"
-        android:allowBackup="true"
-        android:usesCleartextTraffic="true">
-
-        <!-- Foreground service for network monitoring -->
-        <service
-            android:name="com.your_package_name.WifiMonitorService"
-            android:foregroundServiceType="location"
-            android:exported="false" />
+    <application android:label="WiFiGuard">
 
         <!-- Main activity -->
         <activity
@@ -51,9 +41,6 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-
-        <!-- Receiver for local notifications -->
-        <receiver android:name="com.dexterous.flutterlocalnotifications.receivers.NotificationReceiver" />
     </application>
 
     <!-- Queries for processing text actions -->
