@@ -1,7 +1,11 @@
-allprojects {
+buildscript {
     repositories {
         google()
         mavenCentral()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:8.8.0"
+        classpath "com.chaquo.python:gradle:14.0.2"
     }
 
     tasks.withType(JavaCompile).configureEach {
