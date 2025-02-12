@@ -14,8 +14,6 @@ import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodChannel;
 
-import com.example.WiFiGuard.utils.ArpFetcher;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,18 +36,6 @@ public class MainActivity extends FlutterActivity {
                                 requestPermissions();
                                 result.error("PERMISSION_DENIED", "Location permission is required", null);
                             }
-                            break;
-
-                        case "getMacAddress":
-                            String ip = call.argument("ipAddr");
-                            if (ip != null && !ip.isEmpty())
-                                result.success(ArpFetcher.getMacAddress(ip));
-                            else result.error("INVALID_ARGUMENT", "IP address is required", null);
-                            break;
-
-                        case "getAllDevices":
-                            List<String[]> devices = ArpFetcher.getAllDevices();
-                            result.success(devices);
                             break;
 
                         default:
