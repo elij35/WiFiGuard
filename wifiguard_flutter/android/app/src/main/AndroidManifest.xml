@@ -23,6 +23,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application android:label="WiFiGuard">
+        android:name="com.chaquo.python.android.PyApplication">
 
         <!-- Main activity -->
         <activity

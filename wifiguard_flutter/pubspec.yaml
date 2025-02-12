@@ -21,6 +21,7 @@ dependencies:
   flutter_local_notifications: ^18.0.1
   flutter_foreground_task: ^8.17.0
   process_run: ^1.2.1
+  chaquopy: ^0.0.20
 
 dev_dependencies:
   flutter_launcher_icons: ^0.14.1
