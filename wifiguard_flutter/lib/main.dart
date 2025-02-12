@@ -1,8 +1,9 @@
 import 'package:WiFiGuard/screens/dashboard/dashboard.dart';
 import 'package:WiFiGuard/services/notification_service.dart';
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:WiFiGuard/services/wifi_monitor_service.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,15 +13,31 @@ void main() async {
 
   // Load the saved theme mode from shared preferences
   final themeMode = await _loadThemeMode();
-  WifiMonitorService().startMonitoring(); // Start Wi-Fi background scan
+
+  // Start Wi-Fi background scan
+  WifiMonitorService().startMonitoring();
+
+  // Run Python server in the background
+  _startPythonServer();
+
   runApp(WiFiGuardApp(themeMode: themeMode));
 }
 
-// Method to load the theme mode from SharedPreferences
+// Asynchronous function to start the Python server
+void _startPythonServer() async {
+  const platform = MethodChannel('com.example.wifiguard/python');
+  try {
+    await platform.invokeMethod('startPythonServer');
+    print("Python server started successfully");
+  } catch (e) {
+    print("Error starting Python server: $e");
+  }
+}
+
+// Load the theme mode from SharedPreferences
 Future<ThemeMode> _loadThemeMode() async {
   final prefs = await SharedPreferences.getInstance();
-  final isDarkMode =
-      prefs.getBool('isDarkMode') ?? false; // Default to light mode if not set
+  final isDarkMode = prefs.getBool('isDarkMode') ?? false;
   return isDarkMode ? ThemeMode.dark : ThemeMode.light;
 }
 
@@ -32,6 +49,7 @@ class WiFiGuardApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeModeNotifier = ValueNotifier(themeMode);
+    
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: themeModeNotifier,
       builder: (context, themeMode, _) {
