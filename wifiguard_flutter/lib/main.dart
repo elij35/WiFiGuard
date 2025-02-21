@@ -4,6 +4,7 @@ import 'package:WiFiGuard/services/wifi_monitor_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,8 +28,19 @@ void main() async {
 void _startPythonServer() async {
   const platform = MethodChannel('com.example.wifiguard/python');
   try {
+    // Start the Python server
     await platform.invokeMethod('startPythonServer');
     print("Python server started successfully");
+
+    // Wait for 2 seconds before checking server status
+    await Future.delayed(Duration(seconds: 2));
+
+    final response = await http.get(Uri.parse('http://127.0.0.1:5000'));
+    if (response.statusCode == 200) {
+      print("Python server is running!");
+    } else {
+      print("Python server did not start correctly.");
+    }
   } catch (e) {
     print("Error starting Python server: $e");
   }
@@ -49,7 +61,7 @@ class WiFiGuardApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeModeNotifier = ValueNotifier(themeMode);
-    
+
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: themeModeNotifier,
       builder: (context, themeMode, _) {
