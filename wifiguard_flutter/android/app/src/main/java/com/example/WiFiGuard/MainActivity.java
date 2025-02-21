@@ -22,6 +22,7 @@ import android.util.Log;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.io.*;
 
 import android.net.wifi.ScanResult;
 
@@ -29,6 +30,16 @@ public class MainActivity extends FlutterActivity {
     private static final String NETWORK_CHANNEL = "com.example.network/info";
     private static final String PYTHON_CHANNEL = "com.example.wifiguard/python";
     private static final int REQUEST_LOCATION_PERMISSION = 1;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Initialize Python runtime if not already started
+        if (!Python.isStarted()) {
+            Python.start(new AndroidPlatform(this));
+        }
+    }
 
     @Override
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
@@ -50,15 +61,40 @@ public class MainActivity extends FlutterActivity {
                 });
 
         // Channel for starting Python server
-        new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), PYTHON_CHANNEL)
-                .setMethodCallHandler((call, result) -> {
+        new MethodChannel(getFlutterEngine().getDartExecutor(), PYTHON_CHANNEL).setMethodCallHandler(
+                (call, result) -> {
                     if ("startPythonServer".equals(call.method)) {
-                        startPythonServer();
-                        result.success("Python server started");
+                        // Start Python server in a separate thread
+                        new Thread(() -> {
+                            try {
+                                // Call the Python script using Chaquopy (no need for PyObject)
+                                Python py = Python.getInstance();
+                                py.getModule("scan").callAttr("run_flask_server");  // Directly call the function in the Python script
+                                Log.d("Python", "Python server started");
+
+                                result.success("Python server started");
+                            } catch (Exception e) {
+                                Log.e("Python", "Error starting server", e);
+                                result.error("PYTHON_ERROR", "Error starting Python server: " + e.getMessage(), null);
+                            }
+                        }).start();
                     } else {
                         result.notImplemented();
                     }
-                });
+                }
+        );
+    }
+
+    // To manually start the Python server via ProcessBuilder:
+    private void startPythonServer() {
+        try {
+            ProcessBuilder pb = new ProcessBuilder("python3", "/data/data/com.example.WiFiGuard/files/scan.py");
+            pb.redirectErrorStream(true);
+            pb.start();
+            Log.d("Python", "Python server started!");
+        } catch (IOException e) {
+            Log.e("Python", "Error starting Python server: " + e.getMessage());
+        }
     }
 
     private boolean checkPermissions() {
@@ -131,21 +167,5 @@ public class MainActivity extends FlutterActivity {
                 (ipAddress >> 8 & 0xFF),
                 (ipAddress >> 16 & 0xFF),
                 (ipAddress >> 24 & 0xFF));
-    }
-
-    private void startPythonServer() {
-        new Thread(() -> {
-            try {
-                if (!Python.isStarted()) {
-                    Python.start(new AndroidPlatform(this));
-                }
-
-                Python py = Python.getInstance();
-                py.getModule("scan").callAttr("start_server");
-                Log.d("MainActivity", "Python server started");
-            } catch (Exception e) {
-                Log.e("MainActivity", "Failed to start Python server", e);
-            }
-        }).start();
     }
 }
