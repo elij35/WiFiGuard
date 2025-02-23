@@ -39,6 +39,11 @@ public class MainActivity extends FlutterActivity {
         if (!Python.isStarted()) {
             Python.start(new AndroidPlatform(this));
         }
+
+        // Check both location and notification permissions on startup
+        if (!checkPermissions() || !checkNotificationPermissions()) {
+            requestPermissions();
+        }
     }
 
     @Override
@@ -49,12 +54,12 @@ public class MainActivity extends FlutterActivity {
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), NETWORK_CHANNEL)
                 .setMethodCallHandler((call, result) -> {
                     if ("getNetworkInfo".equals(call.method)) {
-                        if (checkPermissions()) {
+                        if (checkPermissions() && checkNotificationPermissions()) {
                             result.success(getNetworkInfo());
                         } else {
-                            // Requests location permissions to get network info
+                            // Requests location and/or notification permissions to get network info
                             requestPermissions();
-                            result.error("PERMISSION_DENIED", "Location permission is required", null);
+                            result.error("PERMISSION_DENIED", "Location and Notification permissions are required", null);
                         }
                     } else {
                         result.notImplemented();
@@ -86,10 +91,16 @@ public class MainActivity extends FlutterActivity {
         );
     }
 
-    // Method to check if location permission is granted
+    // Checks if location permissions are granted
     private boolean checkPermissions() {
         return ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED;
+    }
+
+    // Checks if notifications are granted
+    private boolean checkNotificationPermissions() {
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        return notificationManager.areNotificationsEnabled();
     }
 
     // Method to request location permissions if they aren't granted
