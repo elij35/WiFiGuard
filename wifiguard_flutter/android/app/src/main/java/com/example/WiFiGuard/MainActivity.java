@@ -45,13 +45,14 @@ public class MainActivity extends FlutterActivity {
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
         super.configureFlutterEngine(flutterEngine);
 
-        // Channel for network info
+        // Channel for retrieving network information
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), NETWORK_CHANNEL)
                 .setMethodCallHandler((call, result) -> {
                     if ("getNetworkInfo".equals(call.method)) {
                         if (checkPermissions()) {
                             result.success(getNetworkInfo());
                         } else {
+                            // Requests location permissions to get network info
                             requestPermissions();
                             result.error("PERMISSION_DENIED", "Location permission is required", null);
                         }
@@ -60,14 +61,14 @@ public class MainActivity extends FlutterActivity {
                     }
                 });
 
-        // Channel for starting Python server
+        // Channel for starting the Python server
         new MethodChannel(getFlutterEngine().getDartExecutor(), PYTHON_CHANNEL).setMethodCallHandler(
                 (call, result) -> {
                     if ("startPythonServer".equals(call.method)) {
                         // Start Python server in a separate thread
                         new Thread(() -> {
                             try {
-                                // Call the Python script using Chaquopy (no need for PyObject)
+                                // Call the Python script using Chaquopy
                                 Python py = Python.getInstance();
                                 py.getModule("scan").callAttr("run_flask_server");  // Directly call the function in the Python script
                                 Log.d("Python", "Python server started");
@@ -85,39 +86,19 @@ public class MainActivity extends FlutterActivity {
         );
     }
 
-    // To manually start the Python server via ProcessBuilder:
-    private void startPythonServer() {
-        try {
-            ProcessBuilder pb = new ProcessBuilder("python3", "/data/data/com.example.WiFiGuard/files/scan.py");
-            pb.redirectErrorStream(true);
-            pb.start();
-            Log.d("Python", "Python server started!");
-        } catch (IOException e) {
-            Log.e("Python", "Error starting Python server: " + e.getMessage());
-        }
-    }
-
+    // Method to check if location permission is granted
     private boolean checkPermissions() {
         return ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED;
     }
 
+    // Method to request location permissions if they aren't granted
     private void requestPermissions() {
         ActivityCompat.requestPermissions(
                 this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_LOCATION_PERMISSION &&
-                grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Log.d("MainActivity", "Location permission granted");
-        } else {
-            Log.e("MainActivity", "Location permission denied");
-        }
-    }
-
+    // Method to retrieve network information
     private Map<String, String> getNetworkInfo() {
         Map<String, String> networkInfo = new HashMap<>();
 
@@ -141,6 +122,7 @@ public class MainActivity extends FlutterActivity {
         return networkInfo;
     }
 
+    // Method to determine the security protocol of the current Wi-Fi network
     private String getSecurityProtocol(WifiManager wifiManager) {
         if (!checkPermissions()) {
             return "Unknown";
@@ -161,6 +143,7 @@ public class MainActivity extends FlutterActivity {
         return "Unknown";
     }
 
+    // Method to convert an integer IP address to a human-readable string format
     private String intToIp(int ipAddress) {
         return String.format("%d.%d.%d.%d",
                 (ipAddress & 0xFF),
