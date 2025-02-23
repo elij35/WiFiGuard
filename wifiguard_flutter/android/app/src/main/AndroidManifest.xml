@@ -22,7 +22,10 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-    <application android:label="WiFiGuard">
+    <application
+        android:label="WiFiGuard"
+        android:enableOnBackInvokedCallback="true">
+
         <!-- Main activity -->
         <activity
             android:name=".MainActivity"
