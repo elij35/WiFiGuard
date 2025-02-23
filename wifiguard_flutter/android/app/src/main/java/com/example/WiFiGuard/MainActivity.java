@@ -42,7 +42,7 @@ public class MainActivity extends FlutterActivity {
         }
 
         // Check both location and notification permissions on startup
-        if (!checkPermissions() || !checkNotificationPermissions()) {
+        if (!checkPermissions() && !checkNotificationPermissions()) {
             requestPermissions();
         }
     }
@@ -107,7 +107,10 @@ public class MainActivity extends FlutterActivity {
     // Method to request location permissions if they aren't granted
     private void requestPermissions() {
         ActivityCompat.requestPermissions(
-                this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+                this, new String[]{
+                        Manifest.permission.ACCESS_FINE_LOCATION, // Location permission
+                        Manifest.permission.ACCESS_NOTIFICATION_POLICY // Notification permission
+                }, REQUEST_LOCATION_PERMISSION);
     }
 
     // Method to retrieve network information
