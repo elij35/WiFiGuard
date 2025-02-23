@@ -7,10 +7,6 @@ buildscript {
         classpath "com.android.tools.build:gradle:8.8.0"
         classpath "com.chaquo.python:gradle:14.0.2"
     }
-
-    tasks.withType(JavaCompile).configureEach {
-        options.compilerArgs << '-Xlint:-options'
-    }
 }
 
 rootProject.buildDir = "../build"

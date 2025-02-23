@@ -11,12 +11,12 @@ android {
 
     compileOptions {
         coreLibraryDesugaringEnabled true
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = 17
+        targetCompatibility = 17
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+        jvmTarget = 17
     }
 
     defaultConfig {
@@ -55,6 +55,11 @@ android {
     lint {
         disable 'ObsoleteLintCustomCheck', 'Deprecated'
     }
+}
+
+// Suppress warnings related to Java 8 compatibility and deprecated APIs here
+tasks.withType(JavaCompile) {
+    options.compilerArgs += ['-Xlint:-options', '-Xlint:-deprecation']
 }
 
 flutter {
