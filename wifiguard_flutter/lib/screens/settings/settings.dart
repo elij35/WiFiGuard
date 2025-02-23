@@ -13,22 +13,21 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  late bool isDarkMode;
-  late bool isNotificationsEnabled;
+  late bool isDarkMode; // Stores dark mode preference
+  late bool isNotificationsEnabled; // Stores notification preference
 
   @override
   void initState() {
     super.initState();
     isDarkMode = widget.themeModeNotifier.value == ThemeMode.dark;
-    _loadSettings();
+    _loadSettings(); // Load user preferences
   }
 
-  // Load settings from SharedPreferences
   Future<void> _loadSettings() async {
+    // Retrieve stored preferences
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      isNotificationsEnabled =
-          prefs.getBool('notificationsEnabled') ?? true; // Default to true
+      isNotificationsEnabled = prefs.getBool('notificationsEnabled') ?? true;
       isDarkMode = prefs.getBool('isDarkMode') ?? isDarkMode;
     });
 
@@ -38,8 +37,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  // Toggle theme mode
   void _toggleTheme(bool value) async {
+    // Switch between dark and light mode
     setState(() {
       isDarkMode = value;
       widget.themeModeNotifier.value =
@@ -47,11 +46,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
 
     final prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isDarkMode', isDarkMode);
+    prefs.setBool('isDarkMode', isDarkMode); // Store preference
   }
 
-  // Toggle notifications
   void _toggleNotifications(bool value) async {
+    // Enable/Disable notifications
     setState(() {
       isNotificationsEnabled = value;
     });
@@ -60,9 +59,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     prefs.setBool('notificationsEnabled', isNotificationsEnabled);
 
     if (isNotificationsEnabled) {
-      NotificationService().initializeNotifications(); // Enable notifications
+      NotificationService().initializeNotifications();
     } else {
-      NotificationService().cancelAllNotifications(); // Disable notifications
+      NotificationService().cancelAllNotifications();
     }
   }
 
@@ -77,6 +76,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
+          // Dark Mode Toggle
           buildSettingTile(
             context,
             title: 'Dark Mode',
@@ -86,6 +86,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             activeColor: activeSwitchColor,
           ),
           const Divider(color: Colors.grey),
+
+          // Notification Toggle
           buildSettingTile(
             context,
             title: 'Enable Notifications',

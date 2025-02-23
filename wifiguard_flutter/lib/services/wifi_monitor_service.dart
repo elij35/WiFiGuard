@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:WiFiGuard/services/network_info_service.dart';
 import 'package:WiFiGuard/services/notification_service.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
@@ -11,19 +10,20 @@ class WifiMonitorService {
   Timer? _timer;
 
   void startMonitoring() {
-    // Run the check every 15 minutes
+    // Run security check every 15 minutes
     _timer = Timer.periodic(const Duration(minutes: 15), (timer) async {
       await _checkNetworkSecurity();
     });
 
-    _checkNetworkSecurity(); // Check immediately on startup
+    _checkNetworkSecurity(); // Initial check on startup
   }
 
   void stopMonitoring() {
-    _timer?.cancel();
+    _timer?.cancel(); // Stop monitoring
   }
 
   Future<void> startForegroundService() async {
+    // Start a background service with a persistent notification
     await FlutterForegroundTask.startService(
       notificationTitle: 'WiFiGuard Running',
       notificationText: 'Monitoring your Wi-Fi security in the background.',
@@ -34,12 +34,13 @@ class WifiMonitorService {
     final networkInfo = await _networkService.getNetworkInfo();
     String security = networkInfo['security'] ?? 'Unknown';
 
-    // Check if notifications are enabled in SharedPreferences
+    // Check if notifications are enabled
     final prefs = await SharedPreferences.getInstance();
     bool notificationsEnabled = prefs.getBool('notificationsEnabled') ?? true;
 
-    if (!notificationsEnabled) return; // Don't send notification if disabled
+    if (!notificationsEnabled) return; // Exit if notifications are disabled
 
+    // Alert the user if the network is insecure
     if (security == 'WEP' || security == 'Open/No Security') {
       await _notificationService.showNotification(
         '⚠️ Insecure Wi-Fi Detected',
