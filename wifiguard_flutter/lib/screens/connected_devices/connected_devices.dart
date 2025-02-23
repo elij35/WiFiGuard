@@ -61,11 +61,11 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
 
       if (response.statusCode == 200) {
         // Get the raw Nmap output
-        final String rawOutput = json.decode(response.body)['scan_result'];
+        final Map<String, dynamic> scanResult =
+            json.decode(response.body)['scan_result'];
 
         setState(() {
-          _rawNmapOutput = rawOutput; // Store the raw output for debugging
-          _devices = _parseNmapOutput(rawOutput); // Parse the result
+          _devices = _parseNmapOutput(scanResult); // Parse the result
           _isLoading = false;
         });
 
@@ -88,44 +88,52 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
     }
   }
 
-  // Function to parse the raw Nmap output and extract relevant information
-  List<Map<String, String>> _parseNmapOutput(String output) {
+  List<Map<String, String>> _parseNmapOutput(Map<String, dynamic> output) {
     List<Map<String, String>> devices = [];
 
-    RegExp regExp = RegExp(
-      r"Nmap scan report for (\d+\.\d+\.\d+\.\d+).*?\nHost is up \(([\d.]+)s latency\).*?\n(?:OS details: (.*?)\n)?(?:\d+/tcp\s+open\s+(\S+))?",
-      dotAll: true,
-    );
+    output.forEach((ip, deviceInfo) {
+      String latency = deviceInfo['latency'] != null
+          ? deviceInfo['latency'].toString()
+          : "Unknown"; // Handle null or list values for latency
+      String os = deviceInfo['os'] != null
+          ? deviceInfo['os'].toString()
+          : "Unknown OS"; // Handle non-string OS
+      String openPorts = "No Open Ports";
 
-    for (RegExpMatch match in regExp.allMatches(output)) {
-      String ip = match.group(1) ?? "Unknown IP";
-      String latency = match.group(2) ?? "Unknown";
-      String os = match.group(3) ?? "Unknown OS";
-      String openPorts = match.group(4) ?? "No Open Ports";
-
-      // Look for additional open ports if the initial result is empty
-      if (openPorts == "No Open Ports") {
-        List<String> foundPorts = [];
-        RegExp portRegExp = RegExp(r"(\d+/tcp\s+open\s+\S+)");
-        Iterable<RegExpMatch> portMatches = portRegExp.allMatches(output);
-        for (var portMatch in portMatches) {
-          foundPorts.add(portMatch.group(0) ?? "");
-        }
-        if (foundPorts.isNotEmpty) {
-          openPorts = foundPorts.join(", ");
+      if (deviceInfo['open_ports'] != null) {
+        if (deviceInfo['open_ports'] is Map) {
+          // If open_ports is a map, convert it to a string that shows the open ports
+          openPorts = deviceInfo['open_ports'].keys.join(', ');
+        } else if (deviceInfo['open_ports'] is List) {
+          // If it's a list, convert it to a string
+          openPorts = deviceInfo['open_ports'].join(', ');
         }
       }
 
-      // Add the device info to the list
       devices.add({
         "ip": ip,
         "latency": latency,
         "os": os,
         "open_ports": openPorts,
       });
-    }
+    });
 
     return devices;
+  }
+
+  // Function to get device icon based on OS
+  IconData _getDeviceIcon(String os) {
+    if (os.contains('Windows')) {
+      return Icons.computer;
+    } else if (os.contains('Linux')) {
+      return Icons.computer;
+    } else if (os.contains('Android')) {
+      return Icons.phone_android;
+    } else if (os.contains('iOS')) {
+      return Icons.phone_iphone;
+    } else {
+      return Icons.devices;
+    }
   }
 
   // Function to build the UI for each device
@@ -135,7 +143,7 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
-        leading: Icon(Icons.devices, color: Colors.blue),
+        leading: Icon(_getDeviceIcon(device['os'] ?? ''), color: Colors.blue),
         title: Text(
           "Device IP: ${device['ip']}",
           style: TextStyle(fontWeight: FontWeight.bold),
