@@ -97,6 +97,7 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
       String ip = deviceInfo['ip'] ?? "Unknown IP";
       String mac = deviceInfo['mac'] ?? "Unknown MAC";
       String deviceType = deviceInfo['device_type'] ?? "Unknown Device";
+      String os = deviceInfo['os'] ?? "Unknown OS";
       String openPorts = "No Open Ports";
 
       if (deviceInfo['open_ports'] != null) {
@@ -110,7 +111,8 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
       devices.add({
         "ip": ip,
         "mac": mac,
-        "device_type": deviceType, // Display this instead of OS
+        "device_type": deviceType,
+        "os": os,
         "open_ports": openPorts,
       });
     }
@@ -148,14 +150,18 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
       child: ListTile(
         leading: Icon(Icons.devices, color: Colors.blue),
         title: Text(
-          "Device Type: ${device['device_type']}", // Now showing device type
+          "Device IP: ${device['ip']}",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("IP Address: ${device['ip']}"),
+            Text("Device Type: ${device['device_type']}"),
+            SizedBox(height: 8),
             Text("MAC Address: ${device['mac']}"),
+            SizedBox(height: 8),
+            Text("Operating System: ${device['os']}"),
+            SizedBox(height: 8),
             Text("Open Ports: ${device['open_ports']}"),
           ],
         ),

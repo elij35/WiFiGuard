@@ -80,14 +80,9 @@ def run_nmap_scan(live_hosts):
                 if 'osmatch' in nm[host] and nm[host]['osmatch']:
                     os_info = nm[host]['osmatch'][0]['name']
 
-                # Extract service details for open ports
+                # Get open ports
                 if 'tcp' in nm[host]:
-                    for port, details in nm[host]['tcp'].items():
-                        open_ports.append({
-                            "port": port,
-                            "service": details.get("name", "Unknown Service"),
-                            "version": details.get("version", "Unknown Version")
-                        })
+                    open_ports = list(nm[host]['tcp'].keys())
 
                 # Store all details
                 scan_results.append({
@@ -95,7 +90,7 @@ def run_nmap_scan(live_hosts):
                     "mac": mac_address,
                     "device_type": device_type,
                     "os": os_info,
-                    "open_ports": open_ports
+                    "open_ports": open_ports if open_ports else "No open ports"
                 })
 
         except Exception as e:
