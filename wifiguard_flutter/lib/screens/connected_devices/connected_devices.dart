@@ -15,7 +15,7 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
   List<Map<String, String>> _devices = [];
   bool _isLoading = false;
   bool _scanInProgress = false; // Flag to check scan status
-  String _rawNmapOutput = ""; // Variable to store raw Nmap output
+  String _filterType = "All";
 
   // Function to initialize the app and load saved devices
   @override
@@ -57,16 +57,18 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
       final response = await http.post(
         Uri.parse('http://127.0.0.1:5000/scan'),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({'target': '192.168.0.1'}), // Example target
+        body: json.encode({
+          'target': '192.168.0.1'
+        }), // Testing Target whilst getting the nmap functionality working
       );
 
       if (response.statusCode == 200) {
-        // Get the raw Nmap output
         final List<dynamic> scanResult =
             json.decode(response.body)['scan_result'];
 
         setState(() {
-          _devices = _parseNmapOutput(scanResult); // Parse the result
+          _devices = _parseNmapOutput(scanResult);
+          _devices.sort((a, b) => a['ip']!.compareTo(b['ip']!));
           _isLoading = false;
         });
 
@@ -81,7 +83,6 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
         _devices = [];
         _isLoading = false;
       });
-      _showErrorDialog("Scan failed: $e");
     } finally {
       setState(() {
         _scanInProgress = false;
@@ -95,7 +96,7 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
     for (var deviceInfo in output) {
       String ip = deviceInfo['ip'] ?? "Unknown IP";
       String mac = deviceInfo['mac'] ?? "Unknown MAC";
-      String os = deviceInfo['os'] ?? "Unknown OS";
+      String deviceType = deviceInfo['device_type'] ?? "Unknown Device";
       String openPorts = "No Open Ports";
 
       if (deviceInfo['open_ports'] != null) {
@@ -109,7 +110,7 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
       devices.add({
         "ip": ip,
         "mac": mac,
-        "os": os,
+        "device_type": deviceType, // Display this instead of OS
         "open_ports": openPorts,
       });
     }
@@ -117,18 +118,24 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
     return devices;
   }
 
-  // Function to get device icon based on OS
-  IconData _getDeviceIcon(String os) {
-    if (os.contains('Windows')) {
-      return Icons.computer;
-    } else if (os.contains('Linux')) {
-      return Icons.computer;
-    } else if (os.contains('Android')) {
-      return Icons.phone_android;
-    } else if (os.contains('iOS')) {
-      return Icons.phone_iphone;
-    } else {
-      return Icons.devices;
+  String _determineDeviceType(String os) {
+    if (os.contains('Windows')) return 'PC/Laptop';
+    if (os.contains('Linux')) return 'PC/Laptop';
+    if (os.contains('Android')) return 'Mobile Device';
+    if (os.contains('iOS') || os.contains('Mac')) return 'Apple Device';
+    return 'Unknown Device';
+  }
+
+  IconData _getDeviceIcon(String type) {
+    switch (type) {
+      case 'PC/Laptop':
+        return Icons.computer;
+      case 'Mobile Device':
+        return Icons.phone_android;
+      case 'Apple Device':
+        return Icons.phone_iphone;
+      default:
+        return Icons.devices;
     }
   }
 
@@ -139,18 +146,16 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
-        leading: Icon(_getDeviceIcon(device['os'] ?? ''), color: Colors.blue),
+        leading: Icon(Icons.devices, color: Colors.blue),
         title: Text(
-          "Device IP: ${device['ip']}",
+          "Device Type: ${device['device_type']}", // Now showing device type
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // User-friendly information display
-            Text("Latency: ${device['latency']}s"),
-            Text("Operating System: ${device['os']}"),
-            // Display open ports in a user-friendly way
+            Text("IP Address: ${device['ip']}"),
+            Text("MAC Address: ${device['mac']}"),
             Text("Open Ports: ${device['open_ports']}"),
           ],
         ),
@@ -159,33 +164,27 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
     );
   }
 
-  // Function to show error dialog if scan fails
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Error"),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text("OK"),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  // Function to handle scan button and UI updates
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Connected Devices'),
+        actions: [
+          DropdownButton<String>(
+            value: _filterType,
+            items: ["All", "PC/Laptop", "Mobile Device", "Apple Device"]
+                .map((type) => DropdownMenuItem(
+                      value: type,
+                      child: Text(type),
+                    ))
+                .toList(),
+            onChanged: (value) {
+              setState(() {
+                _filterType = value!;
+              });
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -195,10 +194,6 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
             ElevatedButton(
               onPressed: _isLoading || _scanInProgress ? null : _runScan,
               child: Text(_scanInProgress ? 'Scanning...' : 'Start Scan'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    _scanInProgress ? Colors.grey : Colors.blueAccent,
-              ),
             ),
             SizedBox(height: 20),
             // Display loading or scan results
@@ -209,8 +204,14 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
                         ? Center(child: Text("No devices found."))
                         : ListView.builder(
                             itemCount: _devices.length,
-                            itemBuilder: (context, index) =>
-                                _buildDeviceCard(_devices[index]),
+                            itemBuilder: (context, index) {
+                              if (_filterType == "All" ||
+                                  _devices[index]['device_type'] ==
+                                      _filterType) {
+                                return _buildDeviceCard(_devices[index]);
+                              }
+                              return SizedBox.shrink();
+                            },
                           ),
                   ),
           ],
