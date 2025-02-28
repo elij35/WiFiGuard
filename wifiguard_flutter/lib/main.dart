@@ -39,28 +39,6 @@ Future<void> _requestAllPermissions() async {
     Permission.locationAlways, // Background location access (Wi-Fi scanning)
     Permission.notification, // Required for notifications
   ].request();
-
-  // Check results
-  if (statuses[Permission.storage]!.isGranted ||
-      statuses[Permission.manageExternalStorage]!.isGranted) {
-    print("Storage permission granted!");
-  } else {
-    print("Storage permission denied. Redirecting to settings...");
-    await openAppSettings(); // Opens settings so user can enable permission manually
-  }
-
-  if (statuses[Permission.locationWhenInUse]!.isGranted ||
-      statuses[Permission.locationAlways]!.isGranted) {
-    print("Location permission granted!");
-  } else {
-    print("Location permission denied. Wi-Fi scanning may not work.");
-  }
-
-  if (statuses[Permission.notification]!.isGranted) {
-    print("Notification permission granted!");
-  } else {
-    print("Notification permission denied.");
-  }
 }
 
 // Asynchronous function to copy and start the Python server
@@ -68,7 +46,6 @@ Future<void> _copyAndRunPythonScript() async {
   try {
     if (!await Permission.storage.isGranted &&
         !await Permission.manageExternalStorage.isGranted) {
-      print("Storage permission is still denied.");
       return;
     }
 
