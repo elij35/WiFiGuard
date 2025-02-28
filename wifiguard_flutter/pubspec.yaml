@@ -20,9 +20,10 @@ dependencies:
   shared_preferences: ^2.0.15
   flutter_local_notifications: ^18.0.1
   flutter_foreground_task: ^8.17.0
-  process_run: ^1.2.1
+  process_run: ^1.2.2+1
   chaquopy: ^0.0.20
   font_awesome_flutter: ^10.8.0
+  path_provider: ^2.1.5
 
 dev_dependencies:
   flutter_launcher_icons: ^0.14.1
@@ -33,6 +34,9 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/scan.py
 
 flutter_launcher_icons:
   android: true
