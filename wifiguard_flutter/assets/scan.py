@@ -38,9 +38,25 @@ def get_live_hosts(network):
     return live_hosts
 
 
+def get_device_type(os_info):
+    """
+    Determines the device type based on OS information.
+    """
+    if 'Windows' in os_info:
+        return 'PC/Laptop'
+    elif 'Linux' in os_info:
+        return 'PC/Laptop'
+    elif 'Android' in os_info:
+        return 'Mobile Device'
+    elif 'iOS' in os_info or 'Mac' in os_info:
+        return 'Apple Device'
+    else:
+        return 'Unknown Device'
+
+
 def run_nmap_scan(live_hosts):
     """
-    Runs an Nmap scan on the list of live hosts and extracts important details.
+    Runs an Nmap scan on the list of live hosts and extracts device type, OS, and service details.
     """
     nm = nmap.PortScanner()
     scan_results = []
@@ -48,31 +64,40 @@ def run_nmap_scan(live_hosts):
     for host in live_hosts:
         print(f"Scanning {host}...")
         try:
-            nm.scan(hosts=host, arguments="-O --open")
+            nm.scan(hosts=host, arguments="-O -sV --open")  # `-sV` gets service info
+
             if host in nm.all_hosts():
-                mac_address = None
+                mac_address = nm[host]['addresses'].get('mac', "Unknown MAC")
+                device_type = "Unknown Device"
+                os_info = "Unknown OS"
                 open_ports = []
 
-                # Get MAC address if available
-                if 'addresses' in nm[host] and 'mac' in nm[host]['addresses']:
-                    mac_address = nm[host]['addresses']['mac']
+                # Extract device type from OS class
+                if 'osclass' in nm[host] and nm[host]['osclass']:
+                    device_type = nm[host]['osclass'][0].get('type', 'Unknown Device')
 
-                # Get open ports
-                if 'tcp' in nm[host]:
-                    open_ports = list(nm[host]['tcp'].keys())
-
-                # Get OS information (if detected)
-                os_info = "Unknown OS"
+                # Extract OS details
                 if 'osmatch' in nm[host] and nm[host]['osmatch']:
                     os_info = nm[host]['osmatch'][0]['name']
 
-                # Store only important details
+                # Extract service details for open ports
+                if 'tcp' in nm[host]:
+                    for port, details in nm[host]['tcp'].items():
+                        open_ports.append({
+                            "port": port,
+                            "service": details.get("name", "Unknown Service"),
+                            "version": details.get("version", "Unknown Version")
+                        })
+
+                # Store all details
                 scan_results.append({
                     "ip": host,
-                    "mac": mac_address if mac_address else "Unknown MAC",
+                    "mac": mac_address,
+                    "device_type": device_type,
                     "os": os_info,
-                    "open_ports": open_ports if open_ports else "No open ports"
+                    "open_ports": open_ports
                 })
+
         except Exception as e:
             print(f"Error scanning {host}: {e}")
 
@@ -84,6 +109,7 @@ def scan_network():
     data = request.json
     # Default scan target (Currently just the router for sorting out frontend for faster scanning)
     target = data.get('target', '192.168.0.1')
+    device_filter = data.get('filter', None)  # Optional filter for device type
 
     # Check if nmap is installed and available
     nmap_check = subprocess.run(["which", "nmap"], capture_output=True, text=True)
@@ -91,19 +117,20 @@ def scan_network():
         return jsonify({"error": "nmap is not installed or available on this system."}), 500
 
     try:
-        # Step 1: Find live hosts by pinging the network
         print(f"Scanning the network {target} for live hosts...")
         live_hosts = get_live_hosts(target)
 
         if not live_hosts:
             return jsonify({"error": "No live hosts found in the specified network."}), 404
 
-        # Step 2: Run Nmap scan on live hosts
         print("Running Nmap scan on live hosts...")
         scan_results = run_nmap_scan(live_hosts)
 
-        return jsonify({"scan_result": scan_results})  # Return the scan results for all live hosts
+        if device_filter:
+            scan_results = [device for device in scan_results if
+                            device['device_type'] == device_filter]
 
+        return jsonify({"scan_result": scan_results})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
