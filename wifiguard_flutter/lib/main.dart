@@ -1,48 +1,96 @@
+import 'dart:io';
+
 import 'package:WiFiGuard/screens/dashboard/dashboard.dart';
 import 'package:WiFiGuard/services/notification_service.dart';
 import 'package:WiFiGuard/services/wifi_monitor_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize notifications when app starts
+  // Request All Permissions On App Launch
+  await _requestAllPermissions();
+
+  // Initialize Notifications
   await NotificationService().initializeNotifications();
 
   // Load the saved theme mode from shared preferences
   final themeMode = await _loadThemeMode();
 
-  // Start Wi-Fi background scan
-  WifiMonitorService().startMonitoring();
+  // Start Wi-Fi Monitoring (Only if permissions are granted)
+  if (await Permission.locationWhenInUse.isGranted) {
+    WifiMonitorService().startMonitoring();
+  }
 
-  // Run Python server in the background
-  _startPythonServer();
+  // Copy and Run Python Script
+  await _copyAndRunPythonScript();
 
   runApp(WiFiGuardApp(themeMode: themeMode));
 }
 
-// Asynchronous function to start the Python server
-void _startPythonServer() async {
-  const platform = MethodChannel('com.example.wifiguard/python');
+Future<void> _requestAllPermissions() async {
+  Map<Permission, PermissionStatus> statuses = await [
+    Permission.storage, // Required for file storage
+    Permission.manageExternalStorage, // Android 11+ file access
+    Permission.locationWhenInUse, // Required for Wi-Fi scanning
+    Permission.locationAlways, // Background location access (Wi-Fi scanning)
+    Permission.notification, // Required for notifications
+  ].request();
+
+  // Check results
+  if (statuses[Permission.storage]!.isGranted ||
+      statuses[Permission.manageExternalStorage]!.isGranted) {
+    print("Storage permission granted!");
+  } else {
+    print("Storage permission denied. Redirecting to settings...");
+    await openAppSettings(); // Opens settings so user can enable permission manually
+  }
+
+  if (statuses[Permission.locationWhenInUse]!.isGranted ||
+      statuses[Permission.locationAlways]!.isGranted) {
+    print("Location permission granted!");
+  } else {
+    print("Location permission denied. Wi-Fi scanning may not work.");
+  }
+
+  if (statuses[Permission.notification]!.isGranted) {
+    print("Notification permission granted!");
+  } else {
+    print("Notification permission denied.");
+  }
+}
+
+// Asynchronous function to copy and start the Python server
+Future<void> _copyAndRunPythonScript() async {
   try {
-    // Start the Python server
-    await platform.invokeMethod('startPythonServer');
-    print("Python server started successfully");
-
-    // Wait for 2 seconds before checking server status
-    await Future.delayed(Duration(seconds: 2));
-
-    final response = await http.get(Uri.parse('http://127.0.0.1:5000'));
-    if (response.statusCode == 200) {
-      print("Python server is running!");
-    } else {
-      print("Python server did not start correctly.");
+    if (!await Permission.storage.isGranted &&
+        !await Permission.manageExternalStorage.isGranted) {
+      print("Storage permission is still denied.");
+      return;
     }
+
+    // Define target directory (Downloads folder)
+    final Directory directory = Directory('/storage/emulated/0/Download/');
+    if (!directory.existsSync()) {
+      directory.createSync(recursive: true);
+    }
+
+    // Define file path
+    final String filePath = '${directory.path}/scan.py';
+
+    // Read the Python script from assets (as bytes)
+    final ByteData byteData = await rootBundle.load('assets/scan.py');
+
+    // Write the Python script to the shared location
+    final File file = File(filePath);
+    await file.writeAsBytes(byteData.buffer.asUint8List(), flush: true);
+
+    print("Python script copied successfully: $filePath");
   } catch (e) {
-    print("Error starting Python server: $e");
+    print("Error copying Python script: $e");
   }
 }
 
