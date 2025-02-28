@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -61,7 +62,7 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
 
       if (response.statusCode == 200) {
         // Get the raw Nmap output
-        final Map<String, dynamic> scanResult =
+        final List<dynamic> scanResult =
             json.decode(response.body)['scan_result'];
 
         setState(() {
@@ -88,35 +89,30 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
     }
   }
 
-  List<Map<String, String>> _parseNmapOutput(Map<String, dynamic> output) {
+  List<Map<String, String>> _parseNmapOutput(List<dynamic> output) {
     List<Map<String, String>> devices = [];
 
-    output.forEach((ip, deviceInfo) {
-      String latency = deviceInfo['latency'] != null
-          ? deviceInfo['latency'].toString()
-          : "Unknown"; // Handle null or list values for latency
-      String os = deviceInfo['os'] != null
-          ? deviceInfo['os'].toString()
-          : "Unknown OS"; // Handle non-string OS
+    for (var deviceInfo in output) {
+      String ip = deviceInfo['ip'] ?? "Unknown IP";
+      String mac = deviceInfo['mac'] ?? "Unknown MAC";
+      String os = deviceInfo['os'] ?? "Unknown OS";
       String openPorts = "No Open Ports";
 
       if (deviceInfo['open_ports'] != null) {
-        if (deviceInfo['open_ports'] is Map) {
-          // If open_ports is a map, convert it to a string that shows the open ports
-          openPorts = deviceInfo['open_ports'].keys.join(', ');
-        } else if (deviceInfo['open_ports'] is List) {
-          // If it's a list, convert it to a string
+        if (deviceInfo['open_ports'] is List) {
           openPorts = deviceInfo['open_ports'].join(', ');
+        } else {
+          openPorts = deviceInfo['open_ports'].toString();
         }
       }
 
       devices.add({
         "ip": ip,
-        "latency": latency,
+        "mac": mac,
         "os": os,
         "open_ports": openPorts,
       });
-    });
+    }
 
     return devices;
   }
