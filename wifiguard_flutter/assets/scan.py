@@ -39,30 +39,41 @@ def get_live_hosts(network):
 
 def run_nmap_scan(live_hosts):
     """
-    Runs an Nmap scan on the list of live hosts to gather OS and open ports.
+    Runs an Nmap scan on the list of live hosts and extracts important details.
     """
     nm = nmap.PortScanner()
-    scan_results = {}
+    scan_results = []
 
     for host in live_hosts:
-        print(f"Running Nmap scan on {host}...")
+        print(f"Scanning {host}...")
         try:
-            # Scan for open ports and OS detection currently set to 1000 ports for faster scanning
-            nm.scan(host, '1-1000', arguments='-O')
-            host_info = {}
-            if 'hostnames' in nm[host]:
-                host_info['host'] = host
-                host_info['os'] = nm[host].get('osmatch', 'Unknown OS')
-                host_info['open_ports'] = nm[host].get('tcp', {})
-            else:
-                host_info['host'] = host
-                host_info['os'] = 'Unknown OS'
-                host_info['open_ports'] = {}
+            nm.scan(hosts=host, arguments="-O --open")
+            if host in nm.all_hosts():
+                mac_address = None
+                open_ports = []
 
-            scan_results[host] = host_info
+                # Get MAC address if available
+                if 'addresses' in nm[host] and 'mac' in nm[host]['addresses']:
+                    mac_address = nm[host]['addresses']['mac']
+
+                # Get open ports
+                if 'tcp' in nm[host]:
+                    open_ports = list(nm[host]['tcp'].keys())
+
+                # Get OS information (if detected)
+                os_info = "Unknown OS"
+                if 'osmatch' in nm[host] and nm[host]['osmatch']:
+                    os_info = nm[host]['osmatch'][0]['name']
+
+                # Store only important details
+                scan_results.append({
+                    "ip": host,
+                    "mac": mac_address if mac_address else "Unknown MAC",
+                    "os": os_info,
+                    "open_ports": open_ports if open_ports else "No open ports"
+                })
         except Exception as e:
             print(f"Error scanning {host}: {e}")
-            scan_results[host] = {'error': str(e)}
 
     return scan_results
 
