@@ -14,7 +14,7 @@ class NotificationService {
   // Initializes the notification settings
   Future<void> initializeNotifications() async {
     const androidSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@mipmap/launcher_icon');
     const initSettings = InitializationSettings(android: androidSettings);
 
     // Initialize the plugin with settings

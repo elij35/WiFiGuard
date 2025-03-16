@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:WiFiGuard/screens/dashboard/dashboard.dart';
+import 'package:WiFiGuard/services/wifi_monitor_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -12,6 +13,11 @@ void main() async {
   final themeMode = await _loadThemeMode();
 
   await _copyAndRunPythonScript();
+
+  //Scans Wi-Fi network periodically for bad security (WEP or WPA)
+  final wifiMonitor = WifiMonitorService();
+  wifiMonitor.startForegroundService(); // Start background monitoring
+  wifiMonitor.startMonitoring(); // Start periodic checks
 
   runApp(WiFiGuardApp(themeMode: themeMode));
 }
