@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Load the theme mode based on saved preferences or system default
   final themeMode = await _loadThemeMode();
 
   await _copyAndRunPythonScript();
@@ -20,6 +21,21 @@ void main() async {
   wifiMonitor.startMonitoring(); // Start periodic checks
 
   runApp(WiFiGuardApp(themeMode: themeMode));
+}
+
+Future<ThemeMode> _loadThemeMode() async {
+  final prefs = await SharedPreferences.getInstance();
+  final isDarkMode = prefs.getBool('isDarkMode') ?? null;
+
+  // If no saved preference, fall back to system theme
+  if (isDarkMode == null) {
+    return WidgetsBinding.instance.window.platformBrightness == Brightness.dark
+        ? ThemeMode.dark
+        : ThemeMode.light;
+  }
+
+  // Use saved preference if it exists
+  return isDarkMode ? ThemeMode.dark : ThemeMode.light;
 }
 
 // Asynchronous function to copy and start the Python server
@@ -52,13 +68,6 @@ Future<void> _copyAndRunPythonScript() async {
   }
 }
 
-// Load the theme mode from SharedPreferences
-Future<ThemeMode> _loadThemeMode() async {
-  final prefs = await SharedPreferences.getInstance();
-  final isDarkMode = prefs.getBool('isDarkMode') ?? false;
-  return isDarkMode ? ThemeMode.dark : ThemeMode.light;
-}
-
 class WiFiGuardApp extends StatelessWidget {
   final ThemeMode themeMode;
 
@@ -66,7 +75,7 @@ class WiFiGuardApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeModeNotifier = ValueNotifier(themeMode);
+    final themeModeNotifier = ValueNotifier<ThemeMode>(themeMode);
 
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: themeModeNotifier,

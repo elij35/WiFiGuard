@@ -19,17 +19,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
-    isDarkMode = widget.themeModeNotifier.value == ThemeMode.dark;
-    _loadSettings(); // Load user preferences
+    // Set default theme based on system theme if no preference is stored
+    _loadSettings();
   }
 
   Future<void> _loadSettings() async {
-    // Retrieve stored preferences
     final prefs = await SharedPreferences.getInstance();
+
+    // Get the system theme first
+    final systemBrightness = MediaQuery.of(context).platformBrightness;
+    bool systemIsDarkMode = systemBrightness == Brightness.dark;
+
+    // Retrieve stored preferences
     setState(() {
       isNotificationsEnabled = prefs.getBool('notificationsEnabled') ?? true;
-      isDarkMode = prefs.getBool('isDarkMode') ?? isDarkMode;
+      // Use saved dark mode preference or system default if not saved
+      isDarkMode = prefs.getBool('isDarkMode') ?? systemIsDarkMode;
     });
+
+    // Set themeModeNotifier value based on loaded setting
+    widget.themeModeNotifier.value =
+        isDarkMode ? ThemeMode.dark : ThemeMode.light;
 
     // Initialize notifications if they are enabled
     if (isNotificationsEnabled) {
