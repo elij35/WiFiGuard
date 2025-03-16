@@ -1,8 +1,10 @@
+import 'dart:async';
+
 import 'package:WiFiGuard/screens/connected_devices/connected_devices.dart';
 import 'package:WiFiGuard/screens/help_and_guidance/help_and_guidance.dart';
 import 'package:WiFiGuard/screens/network_info/network_info.dart';
 import 'package:WiFiGuard/screens/settings/settings.dart';
-import 'package:WiFiGuard/services/connected_devices_service.dart';
+import 'package:WiFiGuard/services/network_info_service.dart';
 import 'package:WiFiGuard/widgets/tile_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -20,16 +22,15 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  final ConnectedDevicesService _connectedDevicesService =
-      ConnectedDevicesService();
+  final NetworkService _networkService = NetworkService();
 
   String _wifiName = 'Unknown';
 
   @override
   void initState() {
     super.initState();
-    _loadNetworkData();
-    _requestPermissions();
+    _loadNetworkData(); // Fetch SSID immediately on app launch
+    _requestPermissions(); // Request permissions if necessary
   }
 
   Future<void> _requestPermissions() async {
@@ -49,9 +50,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Future<void> _loadNetworkData() async {
     try {
       // Fetch Wi-Fi name
-      final wifiName = await _connectedDevicesService.getWifiName();
+      final wifiName = await _networkService.getNetworkInfo();
       setState(() {
-        _wifiName = wifiName;
+        _wifiName = wifiName['ssid'] ?? 'Unknown';
       });
     } catch (e) {
       print("Error loading network data: $e");
@@ -78,10 +79,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+      body: RefreshIndicator(
+        onRefresh: _loadNetworkData, // Trigger SSID refresh on pull down
+        child: ListView(
+          // Changed from SingleChildScrollView to ListView
+          padding: const EdgeInsets.all(16.0),
           children: [
             Card(
               color: Color(0xff00177c),
