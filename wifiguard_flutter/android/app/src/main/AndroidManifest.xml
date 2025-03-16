@@ -46,12 +46,6 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-
-        <service
-            android:name="com.example.WiFiGuard.ForegroundService"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="dataSync" />
     </application>
 
     <!-- Queries for processing text actions -->
