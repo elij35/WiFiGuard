@@ -3,9 +3,9 @@ import 'package:WiFiGuard/screens/help_and_guidance/help_and_guidance.dart';
 import 'package:WiFiGuard/screens/network_info/network_info.dart';
 import 'package:WiFiGuard/screens/settings/settings.dart';
 import 'package:WiFiGuard/services/connected_devices_service.dart';
-import 'package:WiFiGuard/services/permission_handler.dart';
 import 'package:WiFiGuard/widgets/tile_builder.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class DashboardScreen extends StatefulWidget {
   final ValueNotifier<ThemeMode> themeModeNotifier;
@@ -29,7 +29,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
     _loadNetworkData();
-    requestPermissions(context);
+    _requestPermissions();
+  }
+
+  Future<void> _requestPermissions() async {
+    final permissions = [
+      Permission.locationWhenInUse,
+      Permission.notification,
+      Permission.storage,
+    ];
+
+    for (var permission in permissions) {
+      if (await permission.status.isDenied) {
+        await permission.request();
+      }
+    }
   }
 
   Future<void> _loadNetworkData() async {

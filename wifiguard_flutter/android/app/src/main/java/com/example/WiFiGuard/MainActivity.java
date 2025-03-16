@@ -40,11 +40,6 @@ public class MainActivity extends FlutterActivity {
         if (!Python.isStarted()) {
             Python.start(new AndroidPlatform(this));
         }
-
-        // Check both location and notification permissions on startup
-        if (!checkPermissions() && !checkNotificationPermissions()) {
-            requestPermissions();
-        }
     }
 
     @Override
