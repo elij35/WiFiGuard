@@ -42,17 +42,10 @@ class NetworkInfoScreenState extends State<NetworkInfoScreen> {
     if (_wifiSecurity == 'WEP' || _wifiSecurity == 'Open/No Security') {
       final notificationService = NotificationService();
       await notificationService.showNotification(
-        '⚠️ Insecure Wi-Fi Detected',
-        'Your current network is using $_wifiSecurity security.',
+        'Insecure Wi-Fi Detected',
+        'The connected network $_wifiName uses $_wifiSecurity, which is insecure!',
       );
     }
-  }
-
-  void _sendInsecureNetworkNotification() {
-    NotificationService().showNotification(
-      'Insecure Wi-Fi Detected',
-      'The connected network $_wifiName uses $_wifiSecurity, which is insecure!',
-    );
   }
 
   // Converts signal int to words
