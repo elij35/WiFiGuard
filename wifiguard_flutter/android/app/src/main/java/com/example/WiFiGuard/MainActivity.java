@@ -30,7 +30,6 @@ import android.net.wifi.ScanResult;
 public class MainActivity extends FlutterActivity {
     private static final String NETWORK_CHANNEL = "com.example.network/info";
     private static final String PYTHON_CHANNEL = "com.example.wifiguard/python";
-    private static final int REQUEST_LOCATION_PERMISSION = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,13 +49,8 @@ public class MainActivity extends FlutterActivity {
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), NETWORK_CHANNEL)
                 .setMethodCallHandler((call, result) -> {
                     if ("getNetworkInfo".equals(call.method)) {
-                        if (checkPermissions() && checkNotificationPermissions()) {
-                            result.success(getNetworkInfo());
-                        } else {
-                            // Requests location and/or notification permissions to get network info
-                            requestPermissions();
-                            result.error("PERMISSION_DENIED", "Location and Notification permissions are required", null);
-                        }
+                        // Directly proceed to get network info (permission checks handled by permission_handler)
+                        result.success(getNetworkInfo());
                     } else {
                         result.notImplemented();
                     }
@@ -87,35 +81,9 @@ public class MainActivity extends FlutterActivity {
         );
     }
 
-    // Checks if location permissions are granted
-    private boolean checkPermissions() {
-        return ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED;
-    }
-
-    // Checks if notifications are granted
-    private boolean checkNotificationPermissions() {
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        return notificationManager.areNotificationsEnabled();
-    }
-
-    // Method to request location permissions if they aren't granted
-    private void requestPermissions() {
-        ActivityCompat.requestPermissions(
-                this, new String[]{
-                        Manifest.permission.ACCESS_FINE_LOCATION, // Location permission
-                        Manifest.permission.ACCESS_NOTIFICATION_POLICY // Notification permission
-                }, REQUEST_LOCATION_PERMISSION);
-    }
-
     // Method to retrieve network information
     private Map<String, String> getNetworkInfo() {
         Map<String, String> networkInfo = new HashMap<>();
-
-        if (!checkPermissions()) {
-            Log.e("MainActivity", "Location permission not granted");
-            return networkInfo;
-        }
 
         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         if (wifiManager != null) {
@@ -134,10 +102,6 @@ public class MainActivity extends FlutterActivity {
 
     // Method to determine the security protocol of the current Wi-Fi network
     private String getSecurityProtocol(WifiManager wifiManager) {
-        if (!checkPermissions()) {
-            return "Unknown";
-        }
-
         List<ScanResult> scanResults = wifiManager.getScanResults();
         WifiInfo currentConnection = wifiManager.getConnectionInfo();
 
