@@ -1,5 +1,4 @@
 import 'package:WiFiGuard/services/network_info_service.dart';
-import 'package:WiFiGuard/services/notification_service.dart';
 import 'package:flutter/material.dart';
 
 class NetworkInfoScreen extends StatefulWidget {
@@ -96,13 +95,15 @@ class NetworkInfoScreenState extends State<NetworkInfoScreen> {
               _buildNetworkInfoCard(
                   Icons.signal_cellular_alt, 'Signal Strength', _wifiSignal),
               _buildNetworkInfoCard(Icons.language, 'IP Address', _wifiIP),
-              _buildNetworkInfoCard(Icons.devices, 'Router MAC Address', _wifiBSSID),
+              _buildNetworkInfoCard(
+                  Icons.devices, 'Router MAC Address', _wifiBSSID),
 
               const Divider(),
 
               // Frequency and Security Section
               _buildSectionHeader('Network Security'),
-              _buildNetworkInfoCard(Icons.wifi_tethering, 'Frequency', _wifiFrequency),
+              _buildNetworkInfoCard(
+                  Icons.wifi_tethering, 'Frequency', _wifiFrequency),
               _buildSecurityCard(_wifiSecurity),
             ],
           ),
@@ -147,13 +148,11 @@ class NetworkInfoScreenState extends State<NetworkInfoScreen> {
     if (security == 'WEP' || security == 'Open/No Security') {
       icon = Icons.warning_amber_rounded;
       iconColor = Colors.red;
-      statusMessage =
-      "Your network is at risk! Consider upgrading to WPA2.";
+      statusMessage = "Your network is at risk! Consider upgrading to WPA2.";
     } else if (security == 'WPA2') {
       icon = Icons.security;
       iconColor = Colors.blue;
-      statusMessage =
-      "Your network is secure.";
+      statusMessage = "Your network is secure.";
     }
 
     return Card(

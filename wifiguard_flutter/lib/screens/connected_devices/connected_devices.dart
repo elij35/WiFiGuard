@@ -64,9 +64,9 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
                   children: [
                     Text(
                       "Before scanning, you must agree to the following terms:\n\n"
-                          "I confirm that I am scanning a network that I own or have permission to scan.\n"
-                          "I understand that unauthorised scanning is illegal and against policy.\n"
-                          "I accept full responsibility for using Wi-Fi Guard ethically.",
+                      "I confirm that I am scanning a network that I own or have permission to scan.\n"
+                      "I understand that unauthorised scanning is illegal and against policy.\n"
+                      "I accept full responsibility for using Wi-Fi Guard ethically.",
                       style: TextStyle(fontSize: 14),
                     ),
                     SizedBox(height: 10),
@@ -98,8 +98,8 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
                 ElevatedButton(
                   onPressed: isChecked
                       ? () {
-                    Navigator.of(context).pop(true); // User accepts
-                  }
+                          Navigator.of(context).pop(true); // User accepts
+                        }
                       : null, // Disable until checkbox is checked
                   child: Text("Accept & Scan"),
                 ),

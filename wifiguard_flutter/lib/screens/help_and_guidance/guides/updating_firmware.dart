@@ -18,15 +18,19 @@ class UpdatingFirmwareScreen extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8.0),
-            Text('1. Identify your router model and visit the manufacturer’s website.'),
+            Text(
+                '1. Identify your router model and visit the manufacturer’s website.'),
             SizedBox(height: 8.0),
-            Text('2. Look for the latest firmware update for your router model.'),
+            Text(
+                '2. Look for the latest firmware update for your router model.'),
             SizedBox(height: 8.0),
-            Text('3. Download the firmware file and follow the instructions provided.'),
+            Text(
+                '3. Download the firmware file and follow the instructions provided.'),
             SizedBox(height: 8.0),
             Text('4. Access your router’s settings via its IP address.'),
             SizedBox(height: 8.0),
-            Text('5. Locate the "Firmware Update" or "Software Update" section.'),
+            Text(
+                '5. Locate the "Firmware Update" or "Software Update" section.'),
             SizedBox(height: 8.0),
             Text('6. Upload the downloaded firmware file and install it.'),
             SizedBox(height: 16.0),
@@ -35,7 +39,8 @@ class UpdatingFirmwareScreen extends StatelessWidget {
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8.0),
-            Text('- Always back up your router settings before updating firmware.\n'
+            Text(
+                '- Always back up your router settings before updating firmware.\n'
                 '- Never turn off your router during an update to prevent corruption.\n'
                 '- Set up automatic updates if your router supports it.'),
           ],

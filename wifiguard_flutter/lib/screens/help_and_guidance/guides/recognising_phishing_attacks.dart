@@ -18,11 +18,14 @@ class RecognisingPhishingAttacks extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8.0),
-            Text('1. Be cautious of emails or messages requesting personal information.'),
+            Text(
+                '1. Be cautious of emails or messages requesting personal information.'),
             SizedBox(height: 8.0),
-            Text('2. Check the sender’s email address for misspellings or suspicious domains.'),
+            Text(
+                '2. Check the sender’s email address for misspellings or suspicious domains.'),
             SizedBox(height: 8.0),
-            Text('3. Hover over links before clicking to verify their destination.'),
+            Text(
+                '3. Hover over links before clicking to verify their destination.'),
             SizedBox(height: 8.0),
             Text('4. Be wary of urgent or threatening language in messages.'),
             SizedBox(height: 8.0),
@@ -33,7 +36,8 @@ class RecognisingPhishingAttacks extends StatelessWidget {
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8.0),
-            Text('- Always verify requests for sensitive information directly with the company.\n'
+            Text(
+                '- Always verify requests for sensitive information directly with the company.\n'
                 '- Use email filtering tools to reduce spam and phishing attempts.\n'
                 '- Enable two-factor authentication for added security.'),
           ],

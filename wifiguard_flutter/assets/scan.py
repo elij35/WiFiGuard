@@ -1,7 +1,6 @@
 import ipaddress
-import subprocess
-
 import nmap
+import subprocess
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
