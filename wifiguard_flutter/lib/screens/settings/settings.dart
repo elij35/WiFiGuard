@@ -1,4 +1,5 @@
 import 'package:WiFiGuard/services/notification_service.dart';
+import 'package:WiFiGuard/widgets/universal_tile_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -86,7 +87,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            _buildSettingTile(
+            UniversalBuilder.buildSettingTile(
               title: 'Dark Mode',
               subtitle: 'Toggle between dark and light themes',
               switchValue: isDarkMode,
@@ -94,7 +95,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               activeColor: activeSwitchColor,
             ),
             const Divider(color: Colors.grey),
-            _buildSettingTile(
+            UniversalBuilder.buildSettingTile(
               title: 'Enable Notifications',
               subtitle: 'Receive notifications for network activity',
               switchValue: isNotificationsEnabled,
@@ -102,29 +103,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               activeColor: activeSwitchColor,
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSettingTile({
-    required String title,
-    required String subtitle,
-    required bool switchValue,
-    required ValueChanged<bool> onSwitchChanged,
-    required Color activeColor,
-  }) {
-    return Card(
-      elevation: 3.0,
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      child: ListTile(
-        leading: Icon(Icons.settings, color: Colors.blue),
-        title: Text(title),
-        subtitle: Text(subtitle),
-        trailing: Switch(
-          value: switchValue,
-          onChanged: onSwitchChanged,
-          activeColor: activeColor,
         ),
       ),
     );

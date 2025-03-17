@@ -5,6 +5,7 @@ import 'package:WiFiGuard/screens/help_and_guidance/help_and_guidance.dart';
 import 'package:WiFiGuard/screens/network_info/network_info.dart';
 import 'package:WiFiGuard/screens/settings/settings.dart';
 import 'package:WiFiGuard/services/network_info_service.dart';
+import 'package:WiFiGuard/widgets/universal_tile_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -107,7 +108,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              _buildDashboardButton(
+              UniversalBuilder.buildDashboardButton(
                 label: 'Network Information',
                 icon: Icons.info,
                 onTap: () {
@@ -119,7 +120,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   );
                 },
               ),
-              _buildDashboardButton(
+              UniversalBuilder.buildDashboardButton(
                 label: 'Connected Devices',
                 icon: Icons.devices,
                 onTap: () {
@@ -131,7 +132,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   );
                 },
               ),
-              _buildDashboardButton(
+              UniversalBuilder.buildDashboardButton(
                 label: 'Help and Info',
                 icon: Icons.help,
                 onTap: () {
@@ -143,7 +144,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   );
                 },
               ),
-              _buildDashboardButton(
+              UniversalBuilder.buildDashboardButton(
                 label: 'Speed Test',
                 icon: Icons.speed,
                 onTap: () {},
@@ -151,23 +152,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildDashboardButton({
-    required String label,
-    required IconData icon,
-    required VoidCallback onTap,
-  }) {
-    return Card(
-      elevation: 3.0,
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      child: ListTile(
-        leading: Icon(icon, color: Colors.blue),
-        title: Text(label),
-        trailing: Icon(Icons.arrow_forward, color: Colors.blue),
-        onTap: onTap,
       ),
     );
   }

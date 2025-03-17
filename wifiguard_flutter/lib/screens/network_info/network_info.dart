@@ -1,4 +1,5 @@
 import 'package:WiFiGuard/services/network_info_service.dart';
+import 'package:WiFiGuard/widgets/universal_tile_builder.dart';
 import 'package:flutter/material.dart';
 
 class NetworkInfoScreen extends StatefulWidget {
@@ -73,14 +74,6 @@ class NetworkInfoScreenState extends State<NetworkInfoScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Network Information'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              _refreshIndicatorKey.currentState?.show();
-            },
-          ),
-        ],
       ),
       body: RefreshIndicator(
         key: _refreshIndicatorKey,
@@ -90,78 +83,26 @@ class NetworkInfoScreenState extends State<NetworkInfoScreen> {
           child: ListView(
             children: [
               // Wi-Fi Details Section
-              _buildSectionHeader('Wi-Fi Details'),
-              _buildNetworkInfoCard(Icons.wifi, 'Wi-Fi Name', _wifiName),
-              _buildNetworkInfoCard(
+              UniversalBuilder.buildSectionHeader('Wi-Fi Details'),
+              UniversalBuilder.buildNetworkInfoCard(
+                  Icons.wifi, 'Wi-Fi Name', _wifiName),
+              UniversalBuilder.buildNetworkInfoCard(
                   Icons.signal_cellular_alt, 'Signal Strength', _wifiSignal),
-              _buildNetworkInfoCard(Icons.language, 'IP Address', _wifiIP),
-              _buildNetworkInfoCard(
+              UniversalBuilder.buildNetworkInfoCard(
+                  Icons.language, 'IP Address', _wifiIP),
+              UniversalBuilder.buildNetworkInfoCard(
                   Icons.devices, 'Router MAC Address', _wifiBSSID),
 
               const Divider(),
 
               // Frequency and Security Section
-              _buildSectionHeader('Network Security'),
-              _buildNetworkInfoCard(
+              UniversalBuilder.buildSectionHeader('Network Security'),
+              UniversalBuilder.buildNetworkInfoCard(
                   Icons.wifi_tethering, 'Frequency', _wifiFrequency),
-              _buildSecurityCard(_wifiSecurity),
+              UniversalBuilder.buildSecurityCard(_wifiSecurity),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  // Builds section headers
-  Widget _buildSectionHeader(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-
-  // Builds a simple information card
-  Widget _buildNetworkInfoCard(IconData icon, String label, String value) {
-    return Card(
-      elevation: 3.0,
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      child: ListTile(
-        leading: Icon(icon, color: Colors.blue),
-        title: Text(label),
-        subtitle: Text(value),
-      ),
-    );
-  }
-
-  // Builds a security status card for each Wi-Fi protocol (WEP, WPA2)
-  Widget _buildSecurityCard(String security) {
-    IconData icon = Icons.lock;
-    Color iconColor = Colors.green;
-    String statusMessage = "Your network is secure.";
-
-    if (security == 'WEP' || security == 'Open/No Security') {
-      icon = Icons.warning_amber_rounded;
-      iconColor = Colors.red;
-      statusMessage = "Your network is at risk! Consider upgrading to WPA2.";
-    } else if (security == 'WPA2') {
-      icon = Icons.security;
-      iconColor = Colors.blue;
-      statusMessage = "Your network is secure.";
-    }
-
-    return Card(
-      elevation: 3.0,
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      child: ListTile(
-        leading: Icon(icon, color: iconColor),
-        title: Text('Security Protocol: $security'),
-        subtitle: Text(statusMessage),
       ),
     );
   }
