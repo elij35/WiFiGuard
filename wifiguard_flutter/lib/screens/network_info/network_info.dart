@@ -37,15 +37,6 @@ class NetworkInfoScreenState extends State<NetworkInfoScreen> {
       _wifiFrequency = _convertFrequencyToBand(networkInfo['frequency']);
       _wifiSecurity = networkInfo['security'] ?? 'Unknown';
     });
-
-    // Send notification if the network is insecure
-    if (_wifiSecurity == 'WEP' || _wifiSecurity == 'Open/No Security') {
-      final notificationService = NotificationService();
-      await notificationService.showNotification(
-        'Insecure Wi-Fi Detected',
-        'The connected network $_wifiName uses $_wifiSecurity, which is insecure!',
-      );
-    }
   }
 
   // Converts signal int to words
