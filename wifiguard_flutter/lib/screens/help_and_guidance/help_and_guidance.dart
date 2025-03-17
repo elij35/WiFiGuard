@@ -65,13 +65,10 @@ class HelpAndGuidanceScreen extends StatelessWidget {
 
   Widget _buildTile(BuildContext context,
       {required IconData icon,
-      required String title,
-      required String description,
-      required Widget targetPage}) {
-    final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
-    final iconColor = isDarkTheme
-        ? Theme.of(context).colorScheme.secondary // Bright for dark theme
-        : Theme.of(context).primaryColor; // Default for light theme
+        required String title,
+        required String description,
+        required Widget targetPage}) {
+    Color iconColor = Theme.of(context).colorScheme.onSurface; // Auto-adjust for dark/light mode
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
