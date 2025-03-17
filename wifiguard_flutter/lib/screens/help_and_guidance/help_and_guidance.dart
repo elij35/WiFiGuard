@@ -1,9 +1,9 @@
 import 'package:WiFiGuard/screens/help_and_guidance/guides/changing_router_password.dart';
 import 'package:WiFiGuard/screens/help_and_guidance/guides/recognising_phishing_attacks.dart';
 import 'package:WiFiGuard/screens/help_and_guidance/guides/securing_network.dart';
+import 'package:WiFiGuard/screens/help_and_guidance/guides/updating_firmware.dart';
 import 'package:WiFiGuard/screens/help_and_guidance/guides/using_2FA.dart';
 import 'package:WiFiGuard/screens/help_and_guidance/guides/using_vpn.dart';
-import 'package:WiFiGuard/screens/help_and_guidance/guides/updating_firmware.dart';
 import 'package:flutter/material.dart';
 
 class HelpAndGuidanceScreen extends StatelessWidget {
@@ -21,7 +21,8 @@ class HelpAndGuidanceScreen extends StatelessWidget {
               context,
               icon: Icons.router,
               title: 'Changing Router Password',
-              description: 'Learn how to update your router\'s password securely.',
+              description:
+                  'Learn how to update your router\'s password securely.',
               targetPage: const ChangingRouterPasswordScreen(),
             ),
             _buildTile(
@@ -70,7 +71,6 @@ class HelpAndGuidanceScreen extends StatelessWidget {
       required String title,
       required String description,
       required Widget targetPage}) {
-
     return Card(
       elevation: 3.0,
       margin: const EdgeInsets.symmetric(vertical: 8.0),
