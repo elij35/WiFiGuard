@@ -5,7 +5,6 @@ import 'package:WiFiGuard/screens/help_and_guidance/help_and_guidance.dart';
 import 'package:WiFiGuard/screens/network_info/network_info.dart';
 import 'package:WiFiGuard/screens/settings/settings.dart';
 import 'package:WiFiGuard/services/network_info_service.dart';
-import 'package:WiFiGuard/widgets/tile_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -80,23 +79,37 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: _loadNetworkData, // Trigger SSID refresh on pull down
-        child: ListView(
-          // Changed from SingleChildScrollView to ListView
+        onRefresh: _loadNetworkData,
+        child: Padding(
           padding: const EdgeInsets.all(16.0),
-          children: [
-            Card(
-              color: Color(0xff00177c),
-              child: ListTile(
-                leading: const Icon(Icons.wifi, color: Colors.white),
-                title: Text(
-                  "SSID: $_wifiName",
-                  style: TextStyle(color: Colors.white),
+          child: ListView(
+            children: [
+              Card(
+                color: Color(0xff00177c),
+                child: ListTile(
+                  leading: const Icon(Icons.wifi, color: Colors.white),
+                  title: Text(
+                    "SSID: $_wifiName",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  subtitle: const Text(
+                    'Connected',
+                    style: TextStyle(color: Color(0xff00f16b)),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const NetworkInfoScreen(),
+                      ),
+                    );
+                  },
                 ),
-                subtitle: const Text(
-                  'Connected',
-                  style: TextStyle(color: Color(0xff00f16b)),
-                ),
+              ),
+              const SizedBox(height: 16),
+              _buildDashboardButton(
+                label: 'Network Information',
+                icon: Icons.info,
                 onTap: () {
                   Navigator.push(
                     context,
@@ -106,55 +119,55 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   );
                 },
               ),
-            ),
-            const SizedBox(height: 16),
-            buildDashboardButton(
-              context,
-              label: 'Network Information',
-              icon: Icons.info,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const NetworkInfoScreen(),
-                  ),
-                );
-              },
-            ),
-            buildDashboardButton(
-              context,
-              label: 'Connected Devices',
-              icon: Icons.devices,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ConnectedDevicesScreen(),
-                  ),
-                );
-              },
-            ),
-            buildDashboardButton(
-              context,
-              label: 'Help and Info',
-              icon: Icons.help,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const HelpAndGuidanceScreen(),
-                  ),
-                );
-              },
-            ),
-            buildDashboardButton(
-              context,
-              label: 'Speed Test',
-              icon: Icons.speed,
-              onTap: () {},
-            ),
-          ],
+              _buildDashboardButton(
+                label: 'Connected Devices',
+                icon: Icons.devices,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ConnectedDevicesScreen(),
+                    ),
+                  );
+                },
+              ),
+              _buildDashboardButton(
+                label: 'Help and Info',
+                icon: Icons.help,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const HelpAndGuidanceScreen(),
+                    ),
+                  );
+                },
+              ),
+              _buildDashboardButton(
+                label: 'Speed Test',
+                icon: Icons.speed,
+                onTap: () {},
+              ),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildDashboardButton({
+    required String label,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return Card(
+      elevation: 3.0,
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      child: ListTile(
+        leading: Icon(icon, color: Colors.blue),
+        title: Text(label),
+        trailing: Icon(Icons.arrow_forward, color: Colors.blue),
+        onTap: onTap,
       ),
     );
   }
