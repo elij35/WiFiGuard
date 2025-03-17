@@ -83,30 +83,50 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),
-      body: ListView(
+      body: Padding(
         padding: const EdgeInsets.all(16.0),
-        children: [
-          // Dark Mode Toggle
-          buildSettingTile(
-            context,
-            title: 'Dark Mode',
-            subtitle: 'Toggle between dark and light themes',
-            switchValue: isDarkMode,
-            onSwitchChanged: _toggleTheme,
-            activeColor: activeSwitchColor,
-          ),
-          const Divider(color: Colors.grey),
+        child: ListView(
+          children: [
+            _buildSettingTile(
+              title: 'Dark Mode',
+              subtitle: 'Toggle between dark and light themes',
+              switchValue: isDarkMode,
+              onSwitchChanged: _toggleTheme,
+              activeColor: activeSwitchColor,
+            ),
+            const Divider(color: Colors.grey),
+            _buildSettingTile(
+              title: 'Enable Notifications',
+              subtitle: 'Receive notifications for network activity',
+              switchValue: isNotificationsEnabled,
+              onSwitchChanged: _toggleNotifications,
+              activeColor: activeSwitchColor,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-          // Notification Toggle
-          buildSettingTile(
-            context,
-            title: 'Enable Notifications',
-            subtitle: 'Receive notifications for network activity',
-            switchValue: isNotificationsEnabled,
-            onSwitchChanged: _toggleNotifications,
-            activeColor: activeSwitchColor,
-          ),
-        ],
+  Widget _buildSettingTile({
+    required String title,
+    required String subtitle,
+    required bool switchValue,
+    required ValueChanged<bool> onSwitchChanged,
+    required Color activeColor,
+  }) {
+    return Card(
+      elevation: 3.0,
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      child: ListTile(
+        leading: Icon(Icons.settings, color: Colors.blue),
+        title: Text(title),
+        subtitle: Text(subtitle),
+        trailing: Switch(
+          value: switchValue,
+          onChanged: onSwitchChanged,
+          activeColor: activeColor,
+        ),
       ),
     );
   }
