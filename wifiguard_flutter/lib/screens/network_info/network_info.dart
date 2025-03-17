@@ -61,9 +61,9 @@ class NetworkInfoScreenState extends State<NetworkInfoScreen> {
     final freq = int.tryParse(frequency.replaceAll(' MHz', '')) ?? 0;
 
     if (freq < 2500) {
-      return '2.4 GHz';
+      return '2.4 GHz (Better range, slower speed)';
     } else if (freq > 2500) {
-      return '5 GHz';
+      return '5 GHz (Faster speed, shorter range)';
     } else {
       return 'Unknown';
     }
@@ -78,7 +78,6 @@ class NetworkInfoScreenState extends State<NetworkInfoScreen> {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
-              // Trigger the RefreshIndicator
               _refreshIndicatorKey.currentState?.show();
             },
           ),
@@ -93,23 +92,18 @@ class NetworkInfoScreenState extends State<NetworkInfoScreen> {
             children: [
               // Wi-Fi Details Section
               _buildSectionHeader('Wi-Fi Details'),
-              _buildInfoRow(Icons.wifi, 'Wi-Fi Name', _wifiName),
-              _buildInfoRow(
+              _buildNetworkInfoCard(Icons.wifi, 'Wi-Fi Name', _wifiName),
+              _buildNetworkInfoCard(
                   Icons.signal_cellular_alt, 'Signal Strength', _wifiSignal),
-              _buildInfoRow(Icons.language, 'IP Address', _wifiIP),
-              _buildInfoRow(Icons.devices, 'Wi-Fi MAC Address', _wifiBSSID),
+              _buildNetworkInfoCard(Icons.language, 'IP Address', _wifiIP),
+              _buildNetworkInfoCard(Icons.devices, 'Router MAC Address', _wifiBSSID),
 
-              const SizedBox(height: 16.0),
+              const Divider(),
 
               // Frequency and Security Section
               _buildSectionHeader('Network Security'),
-              _buildInfoRow(Icons.wifi_tethering, 'Frequency', _wifiFrequency),
-              _buildInfoRow(
-                Icons.security,
-                'Security Protocol',
-                _wifiSecurity,
-                subtitle: _getSecurityExplanation(_wifiSecurity),
-              ),
+              _buildNetworkInfoCard(Icons.wifi_tethering, 'Frequency', _wifiFrequency),
+              _buildSecurityCard(_wifiSecurity),
             ],
           ),
         ),
@@ -117,61 +111,59 @@ class NetworkInfoScreenState extends State<NetworkInfoScreen> {
     );
   }
 
+  // Builds section headers
   Widget _buildSectionHeader(String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Text(
         title,
         style: const TextStyle(
-          fontSize: 18,
+          fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
       ),
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String label, String value,
-      {String? subtitle}) {
-    final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
-    final iconColor = isDarkTheme
-        ? Theme.of(context).colorScheme.secondary
-        : Theme.of(context).primaryColor;
-
+  // Builds a simple information card
+  Widget _buildNetworkInfoCard(IconData icon, String label, String value) {
     return Card(
-      elevation: 4.0,
+      elevation: 3.0,
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: ListTile(
-        leading: Icon(icon, color: iconColor),
+        leading: Icon(icon, color: Colors.blue),
         title: Text(label),
-        subtitle: subtitle != null
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(value),
-                  const SizedBox(height: 4.0),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(fontSize: 12.0, color: Colors.grey),
-                  ),
-                ],
-              )
-            : Text(value),
+        subtitle: Text(value),
       ),
     );
   }
 
-  String? _getSecurityExplanation(String security) {
-    switch (security) {
-      case 'WPA3':
-        return 'Very secure, no action required';
-      case 'WPA2':
-        return 'Secure, no action required';
-      case 'WEP':
-        return 'WEP is outdated and insecure. Upgrade your router settings.';
-      case 'Open/No Security':
-        return 'This network is not secure. Strongly recommended to add a password to the network!';
-      default:
-        return null;
+  // Builds a security status card for each Wi-Fi protocol (WEP, WPA2)
+  Widget _buildSecurityCard(String security) {
+    IconData icon = Icons.lock;
+    Color iconColor = Colors.green;
+    String statusMessage = "Your network is secure.";
+
+    if (security == 'WEP' || security == 'Open/No Security') {
+      icon = Icons.warning_amber_rounded;
+      iconColor = Colors.red;
+      statusMessage =
+      "Your network is at risk! Consider upgrading to WPA2.";
+    } else if (security == 'WPA2') {
+      icon = Icons.security;
+      iconColor = Colors.blue;
+      statusMessage =
+      "Your network is secure.";
     }
+
+    return Card(
+      elevation: 3.0,
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      child: ListTile(
+        leading: Icon(icon, color: iconColor),
+        title: Text('Security Protocol: $security'),
+        subtitle: Text(statusMessage),
+      ),
+    );
   }
 }
