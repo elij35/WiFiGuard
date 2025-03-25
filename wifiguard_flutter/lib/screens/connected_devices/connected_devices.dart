@@ -213,29 +213,6 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
     return devices;
   }
 
-  // Determine the device type based on the OS
-  String _determineDeviceType(String os) {
-    if (os.contains('Windows')) return 'PC/Laptop';
-    if (os.contains('Linux')) return 'PC/Laptop';
-    if (os.contains('Android')) return 'Mobile Device';
-    if (os.contains('iOS') || os.contains('Mac')) return 'Apple Device';
-    return 'Unknown Device';
-  }
-
-  // Get icon based on device type
-  IconData _getDeviceIcon(String type) {
-    switch (type) {
-      case 'PC/Laptop':
-        return Icons.computer;
-      case 'Mobile Device':
-        return Icons.phone_android;
-      case 'Apple Device':
-        return Icons.phone_iphone;
-      default:
-        return Icons.devices;
-    }
-  }
-
   // Function to build the UI for each device
   Widget _buildDeviceCard(Map<String, String> device) {
     return GestureDetector(
