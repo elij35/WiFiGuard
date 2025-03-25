@@ -10,21 +10,33 @@ class WifiMonitorService {
   final NotificationService _notificationService = NotificationService();
   Timer? _timer;
 
-  void startMonitoring() {
-    // Run security check every 15 minutes
-    _timer = Timer.periodic(const Duration(minutes: 15), (timer) async {
+  Future<void> startMonitoring() async {
+    final prefs = await SharedPreferences.getInstance();
+    bool isMonitoringEnabled = prefs.getBool('isMonitoringEnabled') ?? true;
+    int scanInterval = prefs.getInt('scanInterval') ?? 15; // Set the default is 15 min
+
+    if (!isMonitoringEnabled) {
+      stopMonitoring();
+      return;
+    }
+
+    // Ensure previous timer is cleared before starting a new one
+    stopMonitoring();
+
+    // Start periodic network scans
+    _timer = Timer.periodic(Duration(minutes: scanInterval), (timer) async {
       await _checkNetworkSecurity();
     });
 
-    _checkNetworkSecurity(); // Initial check on startup
+    _checkNetworkSecurity(); // Initial scan when monitoring starts
   }
 
   void stopMonitoring() {
-    _timer?.cancel(); // Stop monitoring
+    _timer?.cancel();
   }
 
+  // Sends a notification to say background monitoring has been enabled
   Future<void> startForegroundService() async {
-    // Start a background service with a persistent notification
     await FlutterForegroundTask.startService(
       notificationTitle: 'WiFiGuard Running',
       notificationText: 'Monitoring your Wi-Fi security in the background.',
@@ -45,7 +57,7 @@ class WifiMonitorService {
     if (security == 'WEP' || security == 'Open/No Security') {
       await _notificationService.showNotification(
         '⚠️ Insecure Wi-Fi Detected',
-        'Your current network is using $security security. Consider switching to a more secure network.',
+        'Your current network uses $security security. Consider switching to a more secure network.',
       );
     }
   }

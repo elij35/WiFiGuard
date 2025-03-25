@@ -1,3 +1,4 @@
+import 'package:WiFiGuard/services/wifi_monitor_service.dart';
 import 'package:WiFiGuard/services/notification_service.dart';
 import 'package:WiFiGuard/widgets/universal_tile_builder.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,10 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   late bool isDarkMode; // Stores dark mode preference
   late bool isNotificationsEnabled; // Stores notification preference
+  late bool isMonitoringEnabled;
+  late int scanInterval;
+
+  final List<int> scanIntervals = [5, 10, 15, 30, 60]; // Scan interval options in minutes
 
   @override
   void initState() {
@@ -35,6 +40,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       isNotificationsEnabled = prefs.getBool('notificationsEnabled') ?? true;
       // Use saved dark mode preference or system default if not saved
       isDarkMode = prefs.getBool('isDarkMode') ?? systemIsDarkMode;
+      isMonitoringEnabled = prefs.getBool('isMonitoringEnabled') ?? true;
+      scanInterval = prefs.getInt('scanInterval') ?? 15;
     });
 
     // Set themeModeNotifier value based on loaded setting
@@ -75,6 +82,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  void _toggleMonitoring(bool value) async {
+    setState(() {
+      isMonitoringEnabled = value;
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isMonitoringEnabled', isMonitoringEnabled);
+
+    if (isMonitoringEnabled) {
+      WifiMonitorService().startMonitoring();
+    } else {
+      WifiMonitorService().stopMonitoring();
+    }
+  }
+
+  void _updateScanInterval(int? value) async {
+    if (value == null) return;
+
+    setState(() {
+      scanInterval = value;
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setInt('scanInterval', scanInterval);
+
+    if (isMonitoringEnabled) {
+      WifiMonitorService().startMonitoring();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
@@ -102,6 +139,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onSwitchChanged: _toggleNotifications,
               activeColor: activeSwitchColor,
             ),
+            const Divider(color: Colors.grey),
+            UniversalBuilder.buildSettingTile(
+              title: 'Enable Background Scanning',
+              subtitle: 'Continuously monitor your network security',
+              switchValue: isMonitoringEnabled,
+              onSwitchChanged: _toggleMonitoring,
+              activeColor: activeSwitchColor,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Scan Frequency',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  DropdownButton<int>(
+                    value: scanInterval,
+                    items: scanIntervals
+                        .map((interval) => DropdownMenuItem<int>(
+                      value: interval,
+                      child: Text('$interval min'),
+                    ))
+                        .toList(),
+                    onChanged: _updateScanInterval,
+                  ),
+                ],
+              ),
+            ),
+            const Divider(color: Colors.grey),
           ],
         ),
       ),
