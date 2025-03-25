@@ -112,18 +112,10 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
   }
 
   Future<void> _runScan() async {
-    // Check if user has already accepted the terms
-    final prefs = await SharedPreferences.getInstance();
-    bool hasAcceptedTerms = prefs.getBool('acceptedTerms') ?? false;
-
-    if (!hasAcceptedTerms) {
-      // Show the accept terms dialog
-      bool? accepted = await _showAcceptTermsDialog();
-      if (accepted == null || !accepted) {
-        return; // User did not accept, exit the function
-      }
-      // Save the acceptance in SharedPreferences
-      await prefs.setBool('acceptedTerms', true);
+    // Always show the accept terms dialog before scanning
+    bool? accepted = await _showAcceptTermsDialog();
+    if (accepted == null || !accepted) {
+      return; // User did not accept, exit the function
     }
 
     // Proceed with scanning
