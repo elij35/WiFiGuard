@@ -13,7 +13,8 @@ class WifiMonitorService {
   Future<void> startMonitoring() async {
     final prefs = await SharedPreferences.getInstance();
     bool isMonitoringEnabled = prefs.getBool('isMonitoringEnabled') ?? true;
-    int scanInterval = prefs.getInt('scanInterval') ?? 15; // Set the default is 15 min
+    int scanInterval =
+        prefs.getInt('scanInterval') ?? 15; // Set the default is 15 min
 
     if (!isMonitoringEnabled) {
       stopMonitoring();
