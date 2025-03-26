@@ -130,7 +130,7 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
         Uri.parse('http://127.0.0.1:5000/scan'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
-          'target': '192.168.0.1' // Hardcoded target IP address for scanning
+          'target': '192.168.0.0/24' // Network range to scan
         }),
       );
 
@@ -239,8 +239,6 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text("Device Type: ${device['device_type']}"),
-              SizedBox(height: 8),
-              Text("MAC Address: ${device['mac']}"),
               SizedBox(height: 8),
               Text("Operating System: ${device['os']}"),
               SizedBox(height: 8),
