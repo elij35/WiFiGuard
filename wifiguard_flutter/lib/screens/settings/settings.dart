@@ -19,13 +19,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late bool isMonitoringEnabled;
   late int scanInterval;
 
-  final List<int> scanIntervals = [5, 10, 15, 30, 60]; // Scan interval options in minutes
+  // Scan interval options in minutes
+  final List<int> scanIntervals = [
+    5, // 5 minutes
+    10, // 10 minutes
+    15, // 15 minutes
+    30, // 30 minutes
+    60, // 1 hour
+    1440, // 1 day (24 hours)
+    43200, // 1 month (30 days)
+  ];
 
   @override
   void initState() {
     super.initState();
     // Set default theme based on system theme if no preference is stored
     _loadSettings();
+  }
+
+  // Helper function to convert minutes to human-readable format
+  String _formatInterval(int minutes) {
+    if (minutes < 60) {
+      return '$minutes min';
+    } else if (minutes < 1440) {
+      return '${minutes ~/ 60} hour${minutes ~/ 60 == 1 ? '' : 's'}';
+    } else if (minutes == 1440) {
+      return '1 day';
+    } else if (minutes == 43200) {
+      return '1 month';
+    } else {
+      return '${minutes ~/ 1440} days';
+    }
   }
 
   Future<void> _loadSettings() async {
@@ -161,7 +185,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     items: scanIntervals
                         .map((interval) => DropdownMenuItem<int>(
                       value: interval,
-                      child: Text('$interval min'),
+                      child: Text(_formatInterval(interval)),
                     ))
                         .toList(),
                     onChanged: _updateScanInterval,
