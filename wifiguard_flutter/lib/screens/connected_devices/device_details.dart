@@ -1,4 +1,4 @@
-import 'package:WiFiGuard/screens/connected_devices/ask_AI.dart';
+import 'package:WiFiGuard/screens/ai/ask_AI.dart';
 import 'package:WiFiGuard/widgets/device_details_builder.dart';
 import 'package:flutter/material.dart';
 
