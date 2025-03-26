@@ -13,6 +13,10 @@ void main() async {
   // Load the theme mode based on saved preferences or system default
   final themeMode = await _loadThemeMode();
 
+  // Request storage permissions
+  await _requestStoragePermissions();
+
+  // Copy and Run Python Script
   await _copyAndRunPythonScript();
 
   //Scans Wi-Fi network periodically for bad security (WEP or WPA)
@@ -66,6 +70,13 @@ Future<void> _copyAndRunPythonScript() async {
   } catch (e) {
     print("Error copying Python script: $e");
   }
+}
+
+Future<void> _requestStoragePermissions() async {
+  Map<Permission, PermissionStatus> statuses = await [
+    Permission.storage, // Required for file storage
+    Permission.manageExternalStorage, // Android 11+ file access
+  ].request();
 }
 
 class WiFiGuardApp extends StatelessWidget {
