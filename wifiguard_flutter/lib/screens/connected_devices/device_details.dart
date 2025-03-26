@@ -100,7 +100,18 @@ class DeviceDetailsScreen extends StatelessWidget {
                   ),
                 );
               },
-              child: const Text("Still Stuck? Click Here to Ask AI"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                textStyle:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: const Text("Need Help? Click here to ask AI now"),
             ),
           ),
         ],
