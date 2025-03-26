@@ -6,18 +6,18 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  // Initializes notifications when the service is created
+  // Initialises notifications when the service is created
   NotificationService() {
-    initializeNotifications();
+    initialiseNotifications();
   }
 
-  // Initializes the notification settings
-  Future<void> initializeNotifications() async {
+  // Initialise the notification settings
+  Future<void> initialiseNotifications() async {
     const androidSettings =
         AndroidInitializationSettings('@mipmap/launcher_icon');
     const initSettings = InitializationSettings(android: androidSettings);
 
-    // Initialize the plugin with settings
+    // Initialise the plugin with settings
     await _notificationsPlugin.initialize(initSettings);
   }
 

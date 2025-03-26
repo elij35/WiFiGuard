@@ -8,20 +8,37 @@ import 'package:shared_preferences/shared_preferences.dart';
 class WifiMonitorService {
   final NetworkService _networkService = NetworkService();
   final NotificationService _notificationService = NotificationService();
+
+  // Timer for periodic scanning
   Timer? _timer;
 
+  // Track the monitoring state
+  bool _isMonitoring = false;
+
+  // Starts network monitoring with a periodic scan
   Future<void> startMonitoring() async {
+    // Prevent starting multiple monitoring tasks
+    if (_isMonitoring) {
+      print('Monitoring is already in progress');
+      return;
+    }
+
+    // Load preferences
     final prefs = await SharedPreferences.getInstance();
     bool isMonitoringEnabled = prefs.getBool('isMonitoringEnabled') ?? true;
     int scanInterval =
-        prefs.getInt('scanInterval') ?? 15; // Set the default is 15 min
+        prefs.getInt('scanInterval') ?? 15; // Default is 15 minutes
 
+    // If monitoring is disabled, stop any existing monitoring
     if (!isMonitoringEnabled) {
       stopMonitoring();
       return;
     }
 
-    // Ensure previous timer is cleared before starting a new one
+    // Mark monitoring as active
+    _isMonitoring = true;
+
+    // Cancel any existing timer before starting a new one
     stopMonitoring();
 
     // Start periodic network scans
@@ -29,14 +46,17 @@ class WifiMonitorService {
       await _checkNetworkSecurity();
     });
 
-    _checkNetworkSecurity(); // Initial scan when monitoring starts
+    // Perform an initial scan immediately when monitoring starts
+    await _checkNetworkSecurity();
   }
 
+  // Stops the monitoring process and cancels the timer
   void stopMonitoring() {
     _timer?.cancel();
+    _isMonitoring = false; // Reset the monitoring state
   }
 
-  // Sends a notification to say background monitoring has been enabled
+  // Starts a foreground service to notify the user that monitoring is active
   Future<void> startForegroundService() async {
     await FlutterForegroundTask.startService(
       notificationTitle: 'WiFiGuard Running',
@@ -44,17 +64,20 @@ class WifiMonitorService {
     );
   }
 
+  // Checks the current network security and sends a notification if insecure
   Future<void> _checkNetworkSecurity() async {
+    // Get current network info
     final networkInfo = await _networkService.getNetworkInfo();
     String security = networkInfo['security'] ?? 'Unknown';
 
-    // Check if notifications are enabled
+    // Check if notifications are enabled in preferences
     final prefs = await SharedPreferences.getInstance();
     bool notificationsEnabled = prefs.getBool('notificationsEnabled') ?? true;
 
-    if (!notificationsEnabled) return; // Exit if notifications are disabled
+    // Exit if notifications are disabled
+    if (!notificationsEnabled) return;
 
-    // Alert the user if the network is insecure
+    // Alert user if the network is insecure
     if (security == 'WEP' || security == 'Open/No Security') {
       await _notificationService.showNotification(
         '⚠️ Insecure Wi-Fi Detected',
