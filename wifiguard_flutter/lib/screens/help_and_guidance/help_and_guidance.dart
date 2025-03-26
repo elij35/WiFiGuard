@@ -1,3 +1,4 @@
+import 'package:WiFiGuard/screens/ai/help_AI.dart';
 import 'package:WiFiGuard/screens/help_and_guidance/guides/changing_router_password.dart';
 import 'package:WiFiGuard/screens/help_and_guidance/guides/recognising_phishing_attacks.dart';
 import 'package:WiFiGuard/screens/help_and_guidance/guides/securing_network.dart';
@@ -15,50 +16,85 @@ class HelpAndGuidanceScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Help & Guidance')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ListView(
+        child: Column(
           children: [
-            _buildTile(
-              context,
-              icon: Icons.router,
-              title: 'Changing Router Password',
-              description:
-                  'Learn how to update your router\'s password securely.',
-              targetPage: const ChangingRouterPasswordScreen(),
+            Expanded(
+              child: ListView(
+                children: [
+                  _buildTile(
+                    context,
+                    icon: Icons.router,
+                    title: 'Changing Router Password',
+                    description:
+                        'Learn how to update your router\'s password securely.',
+                    targetPage: const ChangingRouterPasswordScreen(),
+                  ),
+                  _buildTile(
+                    context,
+                    icon: Icons.security,
+                    title: 'Securing Your Network',
+                    description:
+                        'Best practices for ensuring a secure network.',
+                    targetPage: const SecuringNetworkScreen(),
+                  ),
+                  _buildTile(
+                    context,
+                    icon: Icons.vpn_lock,
+                    title: 'Using VPN',
+                    description:
+                        'How to use a VPN to secure your internet activity.',
+                    targetPage: const UsingVPNScreen(),
+                  ),
+                  _buildTile(
+                    context,
+                    icon: Icons.phonelink_lock,
+                    title: 'Recognising Phishing Attacks',
+                    description: 'How to identify and avoid phishing scams.',
+                    targetPage: const RecognisingPhishingAttacks(),
+                  ),
+                  _buildTile(
+                    context,
+                    icon: Icons.system_update,
+                    title: 'Updating Firmware',
+                    description:
+                        'Steps to keep your router firmware up to date.',
+                    targetPage: const UpdatingFirmwareScreen(),
+                  ),
+                  _buildTile(
+                    context,
+                    icon: Icons.verified_user,
+                    title: 'Using Two-Factor Authentication',
+                    description:
+                        'How to set up and use 2FA for extra security.',
+                    targetPage: const UsingTwoFactorAuthScreen(),
+                  ),
+                ],
+              ),
             ),
-            _buildTile(
-              context,
-              icon: Icons.security,
-              title: 'Securing Your Network',
-              description: 'Best practices for ensuring a secure network.',
-              targetPage: const SecuringNetworkScreen(),
-            ),
-            _buildTile(
-              context,
-              icon: Icons.vpn_lock,
-              title: 'Using VPN',
-              description: 'How to use a VPN to secure your internet activity.',
-              targetPage: const UsingVPNScreen(),
-            ),
-            _buildTile(
-              context,
-              icon: Icons.phonelink_lock,
-              title: 'Recognising Phishing Attacks',
-              description: 'How to identify and avoid phishing scams.',
-              targetPage: const RecognisingPhishingAttacks(),
-            ),
-            _buildTile(
-              context,
-              icon: Icons.system_update,
-              title: 'Updating Firmware',
-              description: 'Steps to keep your router firmware up to date.',
-              targetPage: const UpdatingFirmwareScreen(),
-            ),
-            _buildTile(
-              context,
-              icon: Icons.verified_user,
-              title: 'Using Two-Factor Authentication',
-              description: 'How to set up and use 2FA for extra security.',
-              targetPage: const UsingTwoFactorAuthScreen(),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const HelpAndGuidanceAIScreen(),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                  textStyle: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text("Need Help? Click here to ask AI"),
+              ),
             ),
           ],
         ),
@@ -78,7 +114,7 @@ class HelpAndGuidanceScreen extends StatelessWidget {
         leading: Icon(icon, color: Colors.blue),
         title: Text(title),
         subtitle: Text(description),
-        trailing: Icon(Icons.arrow_forward, color: Colors.blue),
+        trailing: const Icon(Icons.arrow_forward, color: Colors.blue),
         onTap: () {
           Navigator.of(context)
               .push(MaterialPageRoute(builder: (_) => targetPage));
