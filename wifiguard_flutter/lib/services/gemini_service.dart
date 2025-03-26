@@ -1,9 +1,11 @@
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 
 class GeminiService {
   static const String _apiKey = "";
-  static const String _apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$_apiKey";
+  static const String _apiUrl =
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$_apiKey";
 
   // Fetch port info (Short & Concise)
   static Future<String> getPortInfo(List<String> ports) async {
@@ -44,7 +46,8 @@ class GeminiService {
       // If the response if successful (200) then return the AI message
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
-        String rawResponse = data['candidates'][0]['content']['parts'][0]['text'].trim();
+        String rawResponse =
+            data['candidates'][0]['content']['parts'][0]['text'].trim();
 
         // Remove asterisks and unnecessary line breaks
         String cleanedResponse = rawResponse.replaceAll("*", "").trim();
