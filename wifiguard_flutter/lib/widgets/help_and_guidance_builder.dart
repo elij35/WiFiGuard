@@ -1,48 +1,32 @@
 import 'package:flutter/material.dart';
 
-/// Tile builder for all Help and Guidance sub-pages
+class HelpTileWidget extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String description;
+  final Widget targetPage;
 
-class TileBuilder {
-  // Method to build a tile with step content
-  static Widget buildStepTile(String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Card(
-        elevation: 3.0,
-        child: ListTile(
-          title: Text(
-            text,
-            style: const TextStyle(fontSize: 16),
-          ),
-        ),
-      ),
-    );
-  }
+  const HelpTileWidget({
+    required this.icon,
+    required this.title,
+    required this.description,
+    required this.targetPage,
+  });
 
-  // Method to build a title with the same style for consistency
-  static Widget buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Text(
-        title,
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-
-  // Method to create a standard AppBar for each screen
-  static AppBar buildAppBar(String title) {
-    return AppBar(
-      title: Text(title),
-    );
-  }
-
-  // Method to wrap all content in Padding without RefreshIndicator
-  static Widget buildBody(Widget child) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: ListView(
-        children: [child],
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 3.0,
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      child: ListTile(
+        leading: Icon(icon, color: Colors.blue),
+        title: Text(title),
+        subtitle: Text(description),
+        trailing: const Icon(Icons.arrow_forward, color: Colors.blue),
+        onTap: () {
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (_) => targetPage));
+        },
       ),
     );
   }
