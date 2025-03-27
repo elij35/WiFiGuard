@@ -1,5 +1,5 @@
 import 'package:WiFiGuard/services/network_info_service.dart';
-import 'package:WiFiGuard/widgets/universal_tile_builder.dart';
+import 'package:WiFiGuard/widgets/Network_info_builder.dart';
 import 'package:flutter/material.dart';
 
 class NetworkInfoScreen extends StatefulWidget {
@@ -83,23 +83,23 @@ class NetworkInfoScreenState extends State<NetworkInfoScreen> {
           child: ListView(
             children: [
               // Wi-Fi Details Section
-              UniversalBuilder.buildSectionHeader('Wi-Fi Details'),
-              UniversalBuilder.buildNetworkInfoCard(
+              NetworkInfoBuilder.buildSectionHeader('Wi-Fi Details'),
+              NetworkInfoBuilder.buildNetworkInfoCard(
                   Icons.wifi, 'Wi-Fi Name', _wifiName),
-              UniversalBuilder.buildNetworkInfoCard(
+              NetworkInfoBuilder.buildNetworkInfoCard(
                   Icons.signal_cellular_alt, 'Signal Strength', _wifiSignal),
-              UniversalBuilder.buildNetworkInfoCard(
+              NetworkInfoBuilder.buildNetworkInfoCard(
                   Icons.language, 'IP Address', _wifiIP),
-              UniversalBuilder.buildNetworkInfoCard(
+              NetworkInfoBuilder.buildNetworkInfoCard(
                   Icons.devices, 'Router MAC Address', _wifiBSSID),
 
               const Divider(),
 
               // Frequency and Security Section
-              UniversalBuilder.buildSectionHeader('Network Security'),
-              UniversalBuilder.buildNetworkInfoCard(
+              NetworkInfoBuilder.buildSectionHeader('Network Security'),
+              NetworkInfoBuilder.buildNetworkInfoCard(
                   Icons.wifi_tethering, 'Frequency', _wifiFrequency),
-              UniversalBuilder.buildSecurityCard(_wifiSecurity),
+              NetworkInfoBuilder.buildSecurityCard(_wifiSecurity),
             ],
           ),
         ),

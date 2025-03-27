@@ -6,7 +6,7 @@ import 'package:WiFiGuard/screens/network_info/network_info.dart';
 import 'package:WiFiGuard/screens/security_details/security_details.dart';
 import 'package:WiFiGuard/screens/settings/settings.dart';
 import 'package:WiFiGuard/services/network_info_service.dart';
-import 'package:WiFiGuard/widgets/universal_tile_builder.dart';
+import 'package:WiFiGuard/widgets/dashboard_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -72,7 +72,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     setState(() {
       _securityScore = 100;
       // Subtract points for weaker security or vulnerabilities
-      if (_wifiSecurity == 'WEP' || _wifiSecurity == 'Open/No Security') _securityScore -= 40;
+      if (_wifiSecurity == 'WEP' || _wifiSecurity == 'Open/No Security')
+        _securityScore -= 40;
       if (_hasOpenPorts) _securityScore -= 30;
     });
   }
@@ -243,7 +244,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               _buildSecurityScoreCard(), // Displays the security score card
               const SizedBox(height: 20),
               // Dashboard buttons for different actions
-              UniversalBuilder.buildDashboardButton(
+              DashboardBuilder.buildDashboardButton(
                   label: 'Network Information',
                   icon: Icons.info,
                   onTap: () => Navigator.push(
@@ -251,23 +252,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       MaterialPageRoute(
                           builder: (context) => const NetworkInfoScreen()))),
               const SizedBox(height: 8),
-              UniversalBuilder.buildDashboardButton(
+              DashboardBuilder.buildDashboardButton(
                   label: 'Connected Devices',
                   icon: Icons.devices,
                   onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                          const ConnectedDevicesScreen()))),
+                              const ConnectedDevicesScreen()))),
               const SizedBox(height: 8),
-              UniversalBuilder.buildDashboardButton(
+              DashboardBuilder.buildDashboardButton(
                   label: 'Help and Info',
                   icon: Icons.help,
                   onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                          const HelpAndGuidanceScreen()))),
+                              const HelpAndGuidanceScreen()))),
             ],
           ),
         ),
