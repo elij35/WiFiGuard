@@ -78,7 +78,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
-  // Navigate to Security Details screen when "Improve Security" is clicked
+  // Navigate to Security Details screen when "Improve Security" is pressed
   void _showFixSuggestions() {
     Navigator.push(
       context,
@@ -92,8 +92,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  // Builds the security score card with network information and options to improve security
-  Widget _buildSecurityScoreCard() {
+  @override
+  Widget build(BuildContext context) {
     final Color scoreColor = _securityScore >= 80
         ? Colors.green
         : (_securityScore >= 50 ? Colors.orange : Colors.red);
@@ -101,121 +101,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ? "Secure"
         : (_securityScore >= 50 ? "Moderate" : "Vulnerable");
 
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            _buildNetworkInfoSection(), // Displays connected Wi-Fi info
-            const SizedBox(height: 16),
-            _buildSecurityScoreSection(scoreColor, securityLevel), // Displays the security score
-            const SizedBox(height: 16),
-            _buildSecurityButton(scoreColor), // Button to improve security
-          ],
-        ),
-      ),
-    );
-  }
-
-  // Displays the Wi-Fi network info (SSID)
-  Widget _buildNetworkInfoSection() {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-      child: Row(
-        children: [
-          // Wi-Fi icon
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(shape: BoxShape.circle),
-            child: const Icon(Icons.wifi, color: Colors.blue),
-          ),
-          const SizedBox(width: 12),
-          // Network information (SSID)
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("Connected Network:",
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium
-                        ?.copyWith(fontWeight: FontWeight.w500)),
-                const SizedBox(height: 4),
-                Text(_wifiName,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                    overflow: TextOverflow.ellipsis),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Displays the security score with a circular progress indicator and security level
-  Widget _buildSecurityScoreSection(Color scoreColor, String securityLevel) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text("Network Security Score",
-            style: Theme.of(context)
-                .textTheme
-                .titleLarge
-                ?.copyWith(fontWeight: FontWeight.bold)),
-        const SizedBox(height: 16),
-        Stack(
-          alignment: Alignment.center,
-          children: [
-            SizedBox(
-              height: 150,
-              width: 150,
-              child: CircularProgressIndicator(
-                value: _securityScore / 100,
-                backgroundColor: Colors.grey.shade200,
-                strokeWidth: 12,
-                valueColor: AlwaysStoppedAnimation<Color>(scoreColor),
-              ),
-            ),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text("$_securityScore%",
-                    style: const TextStyle(
-                        fontSize: 32, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 4),
-                Text(securityLevel,
-                    style: TextStyle(
-                        fontSize: 16,
-                        color: scoreColor,
-                        fontWeight: FontWeight.w500)),
-              ],
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  // Button to navigate to the Security Details screen
-  Widget _buildSecurityButton(Color scoreColor) {
-    return ElevatedButton.icon(
-      icon: const Icon(Icons.security),
-      label: const Text("Improve Security"),
-      onPressed: _showFixSuggestions,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: scoreColor,
-        foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dashboard'),
@@ -241,9 +126,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              _buildSecurityScoreCard(), // Displays the security score card
+              DashboardBuilder.buildSecurityScoreCard(
+                networkInfoSection: DashboardBuilder.buildNetworkInfoSection(
+                    _wifiName, context),
+                securityScoreSection:
+                    DashboardBuilder.buildSecurityScoreSection(
+                        _securityScore, scoreColor, securityLevel),
+                securityButton: DashboardBuilder.buildSecurityButton(
+                    onPressed: _showFixSuggestions, scoreColor: scoreColor),
+              ),
               const SizedBox(height: 20),
-              // Dashboard buttons for different actions
               DashboardBuilder.buildDashboardButton(
                   label: 'Network Information',
                   icon: Icons.info,
