@@ -7,14 +7,18 @@ import scapy.all as scapy
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
-executor = ThreadPoolExecutor(max_workers=50)  # Increased workers for better faster execution of network scans
+executor = ThreadPoolExecutor(
+    max_workers=50)  # Increased workers for better faster execution of network scans
+
 
 def passive_scan():
     """Uses ARP to identify devices"""
     try:
-        return [entry[1].psrc for entry in scapy.arping("192.168.0.0/24", verbose=False)[0]] # Passive ARP scan scanning entire network
+        return [entry[1].psrc for entry in scapy.arping("192.168.0.0/24", verbose=False)[
+            0]]  # Passive ARP scan scanning entire network
     except:
         return []
+
 
 def get_live_hosts(network):
     """Pings hosts and returns active ones"""
@@ -35,6 +39,7 @@ def get_live_hosts(network):
 
     return list(live_hosts)
 
+
 def get_device_type(os_info):
     """Returns device type based on the OS"""
     os_info = os_info.lower()
@@ -45,6 +50,7 @@ def get_device_type(os_info):
     if "ios" in os_info or "mac" in os_info:
         return "Apple Device"
     return "Unknown Device"
+
 
 def analyse_open_ports(ports):
     """List of ports and their descriptions for home user's to understand"""
@@ -69,10 +75,11 @@ def analyse_open_ports(ports):
 
     return results
 
+
 def run_nmap_scan(live_hosts):
     """Runs the Nmap scan"""
     nm = nmap.PortScanner()
-    nmap_args = "-T3 --min-parallelism 50 --max-retries 1 -O -sV --open" # Nmap command used for scanning the network
+    nmap_args = "-T3 --min-parallelism 50 --max-retries 1 -O -sV --open"  # Nmap command used for scanning the network
     scan_results = []
 
     futures = {executor.submit(nm.scan, host, arguments=nmap_args): host for host in live_hosts}
@@ -97,6 +104,7 @@ def run_nmap_scan(live_hosts):
 
     return scan_results
 
+
 @app.route('/scan', methods=['POST'])
 def scan_network():
     """Handles network scanning"""
@@ -109,10 +117,12 @@ def scan_network():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 def run_flask_server():
     """Starts the Flask server"""
     print("Starting Flask server...")
     app.run(host='127.0.0.1', port=5000, debug=False)
+
 
 if __name__ == "__main__":
     run_flask_server()

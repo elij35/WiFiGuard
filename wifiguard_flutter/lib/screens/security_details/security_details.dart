@@ -31,10 +31,16 @@ class SecurityDetailsScreen extends StatelessWidget {
             const SizedBox(height: 24),
 
             // List security factors with status and tips
-            _buildSecurityFactor("Wi-Fi Security", wifiSecurity,
-                wifiSecurity == 'WPA2' || wifiSecurity == 'WPA3', "Use WPA2/WPA3."),
-            _buildSecurityFactor("Open Ports", hasOpenPorts ? "Detected" : "None",
-                !hasOpenPorts, "Close unnecessary ports."),
+            _buildSecurityFactor(
+                "Wi-Fi Security",
+                wifiSecurity,
+                wifiSecurity == 'WPA2' || wifiSecurity == 'WPA3',
+                "Use WPA2/WPA3."),
+            _buildSecurityFactor(
+                "Open Ports",
+                hasOpenPorts ? "Detected" : "None",
+                !hasOpenPorts,
+                "Close unnecessary ports."),
           ],
         ),
       ),
@@ -103,13 +109,15 @@ class SecurityDetailsScreen extends StatelessWidget {
   }
 
   // Builds a security factor card with its status and improvement tip
-  Widget _buildSecurityFactor(String title, String value, bool isSafe, String tip) {
+  Widget _buildSecurityFactor(
+      String title, String value, bool isSafe, String tip) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: ListTile(
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(value),
-        trailing: Icon(isSafe ? Icons.check_circle : Icons.warning, color: isSafe ? Colors.green : Colors.red),
+        trailing: Icon(isSafe ? Icons.check_circle : Icons.warning,
+            color: isSafe ? Colors.green : Colors.red),
       ),
     );
   }
