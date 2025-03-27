@@ -24,11 +24,6 @@ class UsingTwoFactorAuthScreen extends StatelessWidget {
                 '4. Follow the instructions to link your account to the 2FA method.'),
             TileBuilder.buildStepTile(
                 '5. Save your backup codes in a secure location.'),
-            TileBuilder.buildTipsSection(
-              '- Use an authenticator app (like Google Authenticator or Authy) instead of SMS for better security.\n'
-              '- Enable 2FA for all important accounts, including email and banking.\n'
-              '- Regularly check your account’s security settings for new updates.',
-            ),
           ],
         ),
       ),

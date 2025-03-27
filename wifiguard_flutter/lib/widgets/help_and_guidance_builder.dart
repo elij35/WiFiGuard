@@ -37,27 +37,6 @@ class TileBuilder {
     );
   }
 
-  // Method to build a Tips section
-  static Widget buildTipsSection(String tips) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Tips:',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8.0),
-          Text(
-            tips,
-            style: const TextStyle(fontSize: 14),
-          ),
-        ],
-      ),
-    );
-  }
-
   // Method to wrap all content in Padding without RefreshIndicator
   static Widget buildBody(Widget child) {
     return Padding(

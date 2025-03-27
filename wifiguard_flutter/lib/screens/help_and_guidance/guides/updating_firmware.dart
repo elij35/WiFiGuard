@@ -26,11 +26,6 @@ class UpdatingFirmwareScreen extends StatelessWidget {
                 '5. Locate the "Firmware Update" or "Software Update" section.'),
             TileBuilder.buildStepTile(
                 '6. Upload the downloaded firmware file and install it.'),
-            TileBuilder.buildTipsSection(
-              '- Always back up your router settings before updating firmware.\n'
-              '- Never turn off your router during an update to prevent corruption.\n'
-              '- Set up automatic updates if your router supports it.',
-            ),
           ],
         ),
       ),

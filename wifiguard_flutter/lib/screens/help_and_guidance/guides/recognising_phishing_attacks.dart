@@ -23,11 +23,6 @@ class RecognisingPhishingAttacks extends StatelessWidget {
                 '4. Be wary of urgent or threatening language in messages.'),
             TileBuilder.buildStepTile(
                 '5. Avoid downloading attachments from unknown sources.'),
-            TileBuilder.buildTipsSection(
-              '- Always verify requests for sensitive information directly with the company.\n'
-              '- Use email filtering tools to reduce spam and phishing attempts.\n'
-              '- Enable two-factor authentication for added security.',
-            ),
           ],
         ),
       ),

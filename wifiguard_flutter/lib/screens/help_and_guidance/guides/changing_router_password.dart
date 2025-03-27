@@ -26,11 +26,6 @@ class ChangingRouterPasswordScreen extends StatelessWidget {
                 '5. Enter a new, strong password. Use a mix of letters, numbers, and symbols.'),
             TileBuilder.buildStepTile(
                 '6. Save the changes and restart your router if necessary.'),
-            TileBuilder.buildTipsSection(
-              '- Avoid using easily guessed passwords like "password123".\n'
-              '- Update your password regularly to enhance security.\n'
-              '- Use a password manager to keep track of your passwords securely.',
-            ),
           ],
         ),
       ),
