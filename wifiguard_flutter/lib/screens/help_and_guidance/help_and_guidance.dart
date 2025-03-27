@@ -1,4 +1,4 @@
-import 'package:WiFiGuard/screens/ai/help_AI.dart';
+import 'package:WiFiGuard/screens/help_and_guidance/help_AI.dart';
 import 'package:WiFiGuard/screens/help_and_guidance/guides/changing_router_password.dart';
 import 'package:WiFiGuard/screens/help_and_guidance/guides/recognising_phishing_attacks.dart';
 import 'package:WiFiGuard/screens/help_and_guidance/guides/securing_network.dart';

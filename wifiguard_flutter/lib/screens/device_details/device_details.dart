@@ -1,4 +1,4 @@
-import 'package:WiFiGuard/screens/ai/ask_AI.dart';
+import 'package:WiFiGuard/screens/device_details/ask_AI.dart';
 import 'package:WiFiGuard/widgets/device_details_builder.dart';
 import 'package:flutter/material.dart';
 
@@ -15,10 +15,11 @@ class DeviceDetailsScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            _buildDeviceInfo(),
             // Shows general device details
-            _buildOpenPortsSection(context),
+            _buildDeviceInfo(),
+
             // Displays open ports with an option to ask AI
+            _buildOpenPortsSection(context),
           ],
         ),
       ),
