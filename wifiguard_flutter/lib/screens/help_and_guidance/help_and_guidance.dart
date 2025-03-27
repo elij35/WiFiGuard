@@ -5,7 +5,7 @@ import 'package:WiFiGuard/screens/help_and_guidance/guides/updating_firmware.dar
 import 'package:WiFiGuard/screens/help_and_guidance/guides/using_2FA.dart';
 import 'package:WiFiGuard/screens/help_and_guidance/guides/using_vpn.dart';
 import 'package:WiFiGuard/screens/help_and_guidance/help_AI.dart';
-import 'package:WiFiGuard/widgets/help_and_guidance_builder.dart';
+import 'package:WiFiGuard/widgets/help_and_guidance/help_and_guidance_builder.dart';
 import 'package:flutter/material.dart';
 
 class HelpAndGuidanceScreen extends StatelessWidget {
