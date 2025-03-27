@@ -157,7 +157,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         builder: (context) => const ConnectedDevicesScreen()))),
             const SizedBox(height: 8),
             DashboardBuilder.buildDashboardButton(
-                label: 'Help and Info',
+                label: 'Help and Guidance',
                 icon: Icons.help,
                 onTap: () => Navigator.push(
                     context,
