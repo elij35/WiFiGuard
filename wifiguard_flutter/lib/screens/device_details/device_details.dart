@@ -102,7 +102,7 @@ class DeviceDetailsScreen extends StatelessWidget {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
+                backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
                 padding:
                     const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
@@ -112,7 +112,7 @@ class DeviceDetailsScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: const Text("Need Help? Click here to ask AI now"),
+              child: const Text("Need Help? Click here to ask AI"),
             ),
           ),
         ],
