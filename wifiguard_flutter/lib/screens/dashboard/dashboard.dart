@@ -24,6 +24,8 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   final NetworkService _networkService = NetworkService();
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+  GlobalKey<RefreshIndicatorState>();
 
   String _wifiName = 'Unknown';
   int _securityScore = 100;
@@ -33,9 +35,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-    // Load network data and request permissions
-    _loadNetworkData();
+    _loadData();
     _requestPermissions();
+  }
+
+  Future<void> _loadData() async {
+    await _loadNetworkData();
     _calculateSecurityScore();
   }
 
@@ -121,48 +126,44 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: _loadNetworkData,
-        child: SingleChildScrollView(
+        key: _refreshIndicatorKey,
+        onRefresh: _loadData,
+        child: ListView(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              DashboardBuilder.buildSecurityScoreCard(
-                networkInfoSection: DashboardBuilder.buildNetworkInfoSection(
-                    _wifiName, context),
-                securityScoreSection:
-                    DashboardBuilder.buildSecurityScoreSection(
-                        _securityScore, scoreColor, securityLevel),
-                securityButton: DashboardBuilder.buildSecurityButton(
-                    onPressed: _showFixSuggestions, scoreColor: scoreColor),
-              ),
-              const SizedBox(height: 20),
-              DashboardBuilder.buildDashboardButton(
-                  label: 'Network Information',
-                  icon: Icons.info,
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const NetworkInfoScreen()))),
-              const SizedBox(height: 8),
-              DashboardBuilder.buildDashboardButton(
-                  label: 'Connected Devices',
-                  icon: Icons.devices,
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              const ConnectedDevicesScreen()))),
-              const SizedBox(height: 8),
-              DashboardBuilder.buildDashboardButton(
-                  label: 'Help and Info',
-                  icon: Icons.help,
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              const HelpAndGuidanceScreen()))),
-            ],
-          ),
+          children: [
+            DashboardBuilder.buildSecurityScoreCard(
+              networkInfoSection:
+              DashboardBuilder.buildNetworkInfoSection(_wifiName, context),
+              securityScoreSection: DashboardBuilder.buildSecurityScoreSection(
+                  _securityScore, scoreColor, securityLevel),
+              securityButton: DashboardBuilder.buildSecurityButton(
+                  onPressed: _showFixSuggestions, scoreColor: scoreColor),
+            ),
+            const SizedBox(height: 20),
+            DashboardBuilder.buildDashboardButton(
+                label: 'Network Information',
+                icon: Icons.info,
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const NetworkInfoScreen()))),
+            const SizedBox(height: 8),
+            DashboardBuilder.buildDashboardButton(
+                label: 'Connected Devices',
+                icon: Icons.devices,
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ConnectedDevicesScreen()))),
+            const SizedBox(height: 8),
+            DashboardBuilder.buildDashboardButton(
+                label: 'Help and Info',
+                icon: Icons.help,
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const HelpAndGuidanceScreen()))),
+          ],
         ),
       ),
     );
