@@ -9,7 +9,7 @@ class DashboardBuilder {
   }) {
     return Card(
       elevation: 3.0,
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      margin: const EdgeInsets.symmetric(vertical: 6.0),
       child: ListTile(
         leading: Icon(icon, color: Colors.blue),
         title: Text(label),

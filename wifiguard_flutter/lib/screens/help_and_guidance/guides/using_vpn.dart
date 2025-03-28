@@ -21,12 +21,6 @@ class UsingVPNScreen extends StatelessWidget {
                 '3. Open the app, log in, and select a server location.'),
             TileBuilder.buildStepTile(
                 '4. Connect to the VPN server to secure your connection.'),
-            TileBuilder.buildSectionTitle('Benefits of Using a VPN:'),
-            TileBuilder.buildStepTile(
-                '- Protects your data from hackers on public Wi-Fi.'),
-            TileBuilder.buildStepTile('- Hides your IP address and location.'),
-            TileBuilder.buildStepTile(
-                '- Access geo-restricted content securely.'),
           ],
         ),
       ),
