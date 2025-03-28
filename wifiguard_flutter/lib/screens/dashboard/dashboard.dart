@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:WiFiGuard/screens/connected_devices/connected_devices.dart';
 import 'package:WiFiGuard/screens/help_and_guidance/help_and_guidance.dart';
 import 'package:WiFiGuard/screens/network_info/network_info.dart';
-import 'package:WiFiGuard/screens/security_details/security_details.dart';
+import 'package:WiFiGuard/screens/network_security_score/network_security_score.dart';
 import 'package:WiFiGuard/screens/settings/settings.dart';
 import 'package:WiFiGuard/services/network_info_service.dart';
 import 'package:WiFiGuard/widgets/dashboard_builder.dart';
