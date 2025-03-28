@@ -1,137 +1,116 @@
 import 'package:WiFiGuard/screens/device_details/device_details.dart';
 import 'package:flutter/material.dart';
 
-Widget buildDeviceCard(BuildContext context, Map<String, String> device) {
-  final ports = device['open_ports']?.split(',') ?? [];
-  final hasPorts = ports.isNotEmpty;
+class ConnectedDevicesBuilder extends StatelessWidget {
+  // Widget parameters
+  final bool isLoading; // Shows loading indicator when true
+  final bool scanInProgress; // Disables scan button when true
+  final List<Map<String, String>> devices; // List of devices to display
+  final VoidCallback onScanPressed; // Callback for scan button press
 
-  return GestureDetector(
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => DeviceDetailsScreen(device: device),
+  const ConnectedDevicesBuilder({
+    super.key,
+    required this.isLoading,
+    required this.scanInProgress,
+    required this.devices,
+    required this.onScanPressed,
+  });
+
+  // Returns an icon based on device type
+  IconData _getDeviceIcon(String? type) {
+    if (type == null) return Icons.devices_other;
+
+    final lowerType = type.toLowerCase();
+    if (lowerType.contains('pc') || lowerType.contains('laptop')) {
+      return Icons.laptop;
+    } else if (lowerType.contains('mobile')) {
+      return Icons.smartphone;
+    } else if (lowerType.contains('apple')) {
+      return Icons.phone_iphone;
+    }
+    return Icons.devices_other;
+  }
+
+  // Builds a card widget for each device
+  Widget _buildDeviceCard(BuildContext context, Map<String, String> device) {
+    // Parse open ports from comma-separated string to list
+    final ports = device['open_ports']?.split(', ') ?? [];
+    final hasPorts = ports.isNotEmpty;
+
+    return Card(
+      elevation: 3.0,
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      child: ListTile(
+        leading: Icon(_getDeviceIcon(device['device_type']), color: Colors.blue),
+        title: Text(
+          device['ip'] ?? 'Unknown IP',  // Show IP address or unknown if IP wasn't found (very unlikely)
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-      );
-    },
-    child: Card(
-      elevation: 3,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
+        subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // IP Address row
-            Row(
-              children: [
-                const Icon(Icons.lan, color: Colors.blue, size: 24),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    device['ip'] ?? 'Unknown IP',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-
-            // Device Type
-            _buildInfoRow('Type:', device['device_type'] ?? 'Unknown'),
-
-            // OS Info
-            _buildInfoRow('OS:', device['os'] ?? 'Unknown'),
-
-            // Ports section
-            const SizedBox(height: 8),
+            const SizedBox(height: 5),
+            Text('Device Type: ${device['device_type'] ?? 'Unknown'}'),
+            const SizedBox(height: 10),
+            Text('OS: ${device['os'] ?? 'Unknown'}'),
+            const SizedBox(height: 10),
             Text(
-              'Open Ports:',
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.grey[600],
-              ),
+              'Open Ports: \n${hasPorts ? ports.join('\n') : 'None'}',
             ),
-            const SizedBox(height: 4),
-            if (!hasPorts)
-              const Text(
-                'No open ports detected',
-                style: TextStyle(fontSize: 14, color: Colors.grey),
-              )
-            else
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: ports.map((port) => Padding(
-                  padding: const EdgeInsets.only(left: 8, bottom: 4),
-                  child: Text(
-                    port.trim(),
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                )).toList(),
-              ),
           ],
         ),
+        trailing: const Icon(Icons.arrow_forward, color: Colors.blue),
+        onTap: () {
+          // Navigate to device details screen when tapped
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DeviceDetailsScreen(device: device),
+            ),
+          );
+        },
       ),
-    ),
-  );
-}
+    );
+  }
 
-Widget _buildInfoRow(String label, String value) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 4),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 60,
-          child: Text(
-            label,
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              color: Colors.grey[600],
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          // Scan button - disabled during loading or active scan
+          ElevatedButton(
+            onPressed: isLoading || scanInProgress ? null : onScanPressed,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: Text(scanInProgress ? 'Scanning...' : 'Start Scan'),
+          ),
+          const SizedBox(height: 20),
+
+          // Conditional rendering based on loading state
+          isLoading
+              ? const Center(child: CircularProgressIndicator())  // Show loader
+              : Expanded(
+            child: devices.isEmpty
+                ? const Center(child: Text("No devices found."))
+                : ListView.separated(
+              itemCount: devices.length,
+              separatorBuilder: (context, index) =>
+              const SizedBox(height: 8),
+              itemBuilder: (context, index) {
+                return _buildDeviceCard(context, devices[index]);
+              },
             ),
           ),
-        ),
-        Expanded(
-          child: Text(
-            value,
-            style: const TextStyle(fontSize: 14),
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-// Filter button (top right of screen)
-Widget buildDeviceList(
-    BuildContext context,
-    List<Map<String, String>> devices,
-    String filterType,
-    ) {
-  final filteredDevices = devices.where((device) {
-    return filterType == "All" || device['device_type'] == filterType;
-  }).toList();
-
-  return filteredDevices.isEmpty
-      ? const Center(
-    child: Text(
-      'No matching devices found',
-      style: TextStyle(fontSize: 16, color: Colors.grey),
-    ),
-  )
-      : ListView.separated(
-    padding: const EdgeInsets.symmetric(vertical: 8),
-    itemCount: filteredDevices.length,
-    separatorBuilder: (context, index) => const SizedBox(height: 8),
-    itemBuilder: (context, index) {
-      return buildDeviceCard(context, filteredDevices[index]);
-    },
-  );
+        ],
+      ),
+    );
+  }
 }

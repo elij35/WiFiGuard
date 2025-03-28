@@ -108,6 +108,25 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
     }
   }
 
+  // Gets the devices chosen in the filter (in top right)
+  List<Map<String, String>> _getFilteredDevices() {
+    if (_filterType == "All") return _devices;
+
+    return _devices.where((device) {
+      final type = device['device_type']?.toLowerCase() ?? '';
+      switch (_filterType) {
+        case "PC/Laptop":
+          return type.contains('pc') || type.contains('laptop');
+        case "Mobile Device":
+          return type.contains('mobile');
+        case "Apple Device":
+          return type.contains('apple');
+        default:
+          return true;
+      }
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -130,26 +149,11 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            // Scan button
-            ElevatedButton(
-              onPressed: _isLoading || _scanInProgress ? null : _runScan,
-              child: Text(_scanInProgress ? 'Scanning...' : 'Start Scan'),
-            ),
-            SizedBox(height: 20),
-            // Display loading or scan results
-            _isLoading
-                ? Center(child: CircularProgressIndicator())
-                : Expanded(
-                    child: _devices.isEmpty
-                        ? Center(child: Text("No devices found."))
-                        : buildDeviceList(context, _devices, _filterType),
-                  ),
-          ],
-        ),
+      body: ConnectedDevicesBuilder(
+        isLoading: _isLoading,
+        scanInProgress: _scanInProgress,
+        devices: _getFilteredDevices(),
+        onScanPressed: _runScan,
       ),
     );
   }
