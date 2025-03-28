@@ -11,7 +11,7 @@ class AskAIScreen extends StatefulWidget {
 }
 
 class _AskAIScreenState extends State<AskAIScreen> {
-  String _aiResponse = "Ask AI anything about networking or computing.";
+  List<String> _chatHistory = [];
   bool _isLoading = false;
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController =
@@ -20,7 +20,10 @@ class _AskAIScreenState extends State<AskAIScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchAIResponseForPorts(); // Fetch port details when screen loads
+    if (widget.ports.isNotEmpty) {
+      _chatHistory.add("Detected ports: ${widget.ports.join(', ')}");
+      _fetchAIResponseForPorts();
+    }
   }
 
   // Fetch AI-generated info about the detected open ports
@@ -28,9 +31,11 @@ class _AskAIScreenState extends State<AskAIScreen> {
     if (widget.ports.isEmpty) return; // No ports, nothing to analyse
     setState(() => _isLoading = true);
 
-    String response = await GeminiService.getPortInfo(widget.ports);
+    String context = _chatHistory.join("\n");
+    String response = await GeminiService.getPortInfo(widget.ports, context: context);
+
     setState(() {
-      _aiResponse = response;
+      _chatHistory.add("AI: $response");
       _isLoading = false;
     });
 
@@ -44,13 +49,15 @@ class _AskAIScreenState extends State<AskAIScreen> {
 
     setState(() {
       _isLoading = true;
-      _aiResponse = "Fetching response..."; // Temporary message
-      _searchController.clear(); // Clear text field after submitting
+      _chatHistory.add("You: $query");
+      _searchController.clear();
     });
 
-    String response = await GeminiService.askQuestion(query);
+    String context = _chatHistory.join("\n");
+    String response = await GeminiService.askQuestion(query, context: context);
+
     setState(() {
-      _aiResponse = response;
+      _chatHistory.add("AI: $response");
       _isLoading = false;
     });
 
@@ -60,11 +67,13 @@ class _AskAIScreenState extends State<AskAIScreen> {
   // Automatically scrolls to the bottom when a new response is loaded
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
     });
   }
 
@@ -87,28 +96,29 @@ class _AskAIScreenState extends State<AskAIScreen> {
             // AI response section body
             Expanded(
               child: _isLoading
-                  ? const Center(
-                      child:
-                          CircularProgressIndicator()) // Show loading spinner
+                  ? const Center(child: CircularProgressIndicator())
                   : Scrollbar(
-                      child: SingleChildScrollView(
-                        controller: _scrollController,
-                        child: Card(
-                          elevation: 4,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: SelectableText(
-                              _aiResponse, // Display AI response here
-                              style: const TextStyle(fontSize: 16, height: 1.5),
-                              textAlign: TextAlign.left,
-                            ),
-                          ),
+                child: SingleChildScrollView(
+                  controller: _scrollController,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: _chatHistory.map((message) => Card(
+                      elevation: 4,
+                      margin: const EdgeInsets.only(bottom: 8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: SelectableText(
+                          message,
+                          style: const TextStyle(fontSize: 16, height: 1.5),
                         ),
                       ),
-                    ),
+                    )).toList(),
+                  ),
+                ),
+              ),
             ),
 
             const SizedBox(height: 20),

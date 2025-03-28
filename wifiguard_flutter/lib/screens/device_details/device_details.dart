@@ -1,4 +1,4 @@
-import 'package:WiFiGuard/screens/device_details/ask_AI.dart';
+import 'package:WiFiGuard/screens/device_details/device_details_AI.dart';
 import 'package:WiFiGuard/widgets/device_details_builder.dart';
 import 'package:flutter/material.dart';
 
@@ -83,7 +83,7 @@ class DeviceDetailsScreen extends StatelessWidget {
                     children: knownPorts
                         .map((port) => Padding(
                               padding: const EdgeInsets.only(top: 4),
-                              child: Text(port),
+                              child: Text(port.trim()),
                             ))
                         .toList(),
                   )

@@ -10,11 +10,17 @@ class HelpAndGuidanceAIScreen extends StatefulWidget {
 }
 
 class _HelpAndGuidanceAIScreenState extends State<HelpAndGuidanceAIScreen> {
-  String _aiResponse =
-      "Ask AI anything about network security and best practices.";
+  List<String> _chatHistory = [];
   bool _isLoading = false;
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _chatHistory
+        .add("AI: Ask me anything about network security and best practices.");
+  }
 
   void _fetchAIResponseForQuery() async {
     String query = _searchController.text.trim();
@@ -22,13 +28,15 @@ class _HelpAndGuidanceAIScreenState extends State<HelpAndGuidanceAIScreen> {
 
     setState(() {
       _isLoading = true;
-      _aiResponse = "Fetching response...";
+      _chatHistory.add("You: $query");
       _searchController.clear();
     });
 
-    String response = await GeminiService.askQuestion(query);
+    String context = _chatHistory.join("\n");
+    String response = await GeminiService.askQuestion(query, context: context);
+
     setState(() {
-      _aiResponse = response;
+      _chatHistory.add("AI: $response");
       _isLoading = false;
     });
 
@@ -65,19 +73,25 @@ class _HelpAndGuidanceAIScreenState extends State<HelpAndGuidanceAIScreen> {
                   : Scrollbar(
                       child: SingleChildScrollView(
                         controller: _scrollController,
-                        child: Card(
-                          elevation: 4,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: SelectableText(
-                              _aiResponse,
-                              style: const TextStyle(fontSize: 16, height: 1.5),
-                              textAlign: TextAlign.left,
-                            ),
-                          ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: _chatHistory
+                              .map((message) => Card(
+                                    elevation: 4,
+                                    margin: const EdgeInsets.only(bottom: 8),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: SelectableText(
+                                        message,
+                                        style: const TextStyle(
+                                            fontSize: 16, height: 1.5),
+                                      ),
+                                    ),
+                                  ))
+                              .toList(),
                         ),
                       ),
                     ),
@@ -86,7 +100,7 @@ class _HelpAndGuidanceAIScreenState extends State<HelpAndGuidanceAIScreen> {
             TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                labelText: "Ask AI about network security or setup",
+                labelText: "Ask AI about networking or computing",
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.send),
                   onPressed: _fetchAIResponseForQuery,

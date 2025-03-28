@@ -7,20 +7,35 @@ class GeminiService {
   static const String _apiUrl =
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$_apiKey";
 
-  // Fetch port info (Short & Concise)
-  static Future<String> getPortInfo(List<String> ports) async {
+  // Fetch port info (On device_details screen)
+  static Future<String> getPortInfo(List<String> ports,
+      {String? context}) async {
     if (ports.isEmpty) return "No open ports detected.";
 
-    String query =
-        "For each of these ports: ${ports.join(', ')}, provide a short description (10 words max) and a security risk warning (10 words max). Keep it concise.";
+    String query = "For these ports: ${ports.join(', ')}, provide: "
+    "1. Short description (5-10 words)"
+    "2. Security risk level (Low/Medium/High/Critical)"
+    "3. Brief explanation (10 words max)"
+    "Then structure them as follows with a line gap between each: "
+    "Description: "
+    "Risk: "
+    "Why it's an issue: ";
+
+    if (context != null) {
+      query = "Context:\n$context\n\nQuestion: $query";
+    }
 
     return _fetchAIResponse(query);
   }
 
   // Fetch AI response for user questions
-  static Future<String> askQuestion(String question) async {
-    String query =
-        "Answer concisely: $question. Limit response to 2 sentences.";
+  static Future<String> askQuestion(String question, {String? context}) async {
+    String query = "Question: $question\n\n"
+        "Answer concisely (2-3 sentences max) and technically accurate. If it relates to something outside of the networking or computing scope DO NOT answer it.";
+
+    if (context != null) {
+      query = "Context:\n$context\n\n$query";
+    }
 
     return _fetchAIResponse(query);
   }
@@ -49,10 +64,8 @@ class GeminiService {
         String rawResponse =
             data['candidates'][0]['content']['parts'][0]['text'].trim();
 
-        // Remove asterisks and unnecessary line breaks
-        String cleanedResponse = rawResponse.replaceAll("*", "").trim();
-
-        return cleanedResponse;
+        // Removes asterisks and unnecessary line breaks
+        return rawResponse.replaceAll("*", "").trim();
       } else {
         return "Failed to get AI response. Error: ${response.statusCode}";
       }
