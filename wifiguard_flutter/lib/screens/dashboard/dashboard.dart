@@ -25,7 +25,7 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   final NetworkService _networkService = NetworkService();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-  GlobalKey<RefreshIndicatorState>();
+      GlobalKey<RefreshIndicatorState>();
 
   String _wifiName = 'Unknown';
   int _securityScore = 100;
@@ -133,7 +133,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           children: [
             DashboardBuilder.buildSecurityScoreCard(
               networkInfoSection:
-              DashboardBuilder.buildNetworkInfoSection(_wifiName, context),
+                  DashboardBuilder.buildNetworkInfoSection(_wifiName, context),
               securityScoreSection: DashboardBuilder.buildSecurityScoreSection(
                   _securityScore, scoreColor, securityLevel),
               securityButton: DashboardBuilder.buildSecurityButton(
