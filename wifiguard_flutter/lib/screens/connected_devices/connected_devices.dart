@@ -19,7 +19,7 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
   List<Map<String, String>> _devices = [];
   bool _isLoading = false;
   bool _scanInProgress = false; // Flag to check scan status
-  bool _serverAvailable = true;
+  bool _serverAvailable = false;
   String _filterType = "All";
 
   // Function to load saved devices and check python server status
@@ -33,15 +33,16 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
   Future<void> _checkServerStatus() async {
     try {
       final response = await http
-          .get(Uri.parse('http://127.0.0.1:5000/'))
-          .timeout(const Duration(seconds: 2));
-      setState(() {
-        _serverAvailable = response.statusCode == 200;
-      });
+          .get(Uri.parse("http://localhost:5000/alive"))
+          .timeout(const Duration(seconds: 3));
+
+      if (response.statusCode == 200) {
+        setState(() => _serverAvailable = true);
+        return;
+      }
     } catch (e) {
-      setState(() {
-        _serverAvailable = false;
-      });
+      setState(() => _serverAvailable = false);
+      debugPrint('Server check error: $e');
     }
   }
 

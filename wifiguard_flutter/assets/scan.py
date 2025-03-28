@@ -120,6 +120,10 @@ def scan_network():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/alive')
+def health_check():
+    """Endpoint for server health checks"""
+    return jsonify({"status": "alive", "service": "WiFiGuard Scanner"}), 200
 
 def run_flask_server():
     """Starts the Flask server"""
