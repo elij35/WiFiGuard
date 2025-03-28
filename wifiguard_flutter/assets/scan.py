@@ -53,25 +53,28 @@ def get_device_type(os_info):
 
 
 def analyse_open_ports(ports):
-    """List of ports and their descriptions for home user's to understand"""
+    """List of common ports and their protocol name"""
     port_info = {
-        21: ("FTP", "High Risk", "Used for file transfers but lacks encryption."),
-        22: ("SSH", "Low Risk", "Used for secure remote access."),
-        25: ("SMTP", "Medium Risk", "Used to send emails, but attackers may abuse it."),
-        53: ("DNS", "Low Risk", "Translates web addresses to IPs."),
-        80: ("HTTP", "Medium Risk", "Handles websites but sends data without encryption."),
-        443: ("HTTPS", "Safe", "Encrypted web traffic."),
-        445: ("SMB", "Critical Risk", "Used for sharing files on networks."),
-        3389: ("RDP", "High Risk", "Used for Remote desktop access."),
-        8080: ("HTTP Proxy", "Medium Risk", "Often used for web services."),
+        21: "FTP",
+        22: "SSH",
+        25: "SMTP",
+        53: "DNS",
+        80: "HTTP",
+        443: "HTTPS",
+        135: "RPC",
+        139: "NetBIOS",
+        445: "SMB",
+        3389: "RDP",
+        8080: "HTTP Proxy",
     }
 
-    results = [
-        f"Port {port} ({port_info.get(port, ('Unknown', 'Unknown', 'No details'))[0]}) - "
-        f"{port_info.get(port, ('Unknown', 'Unknown', 'No details'))[1]}. "
-        f"{port_info.get(port, ('Unknown', 'Unknown', 'No details'))[2]}"
-        for port in ports
-    ]
+    results = []
+    for port in ports:
+        if port in port_info:
+            name = port_info[port]
+            results.append(f"Port {port}: {name}")
+        else:
+            results.append(f"Port {port}: Unknown")
 
     return results
 
