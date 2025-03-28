@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:WiFiGuard/screens/connected_devices/terms_and_conditions.dart';
 import 'package:WiFiGuard/services/nmap_scan.dart';
 import 'package:WiFiGuard/widgets/connected_devices_builder.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ConnectedDevicesScreen extends StatefulWidget {
@@ -17,13 +19,30 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
   List<Map<String, String>> _devices = [];
   bool _isLoading = false;
   bool _scanInProgress = false; // Flag to check scan status
+  bool _serverAvailable = true;
   String _filterType = "All";
 
-  // Function to initialize the app and load saved devices
+  // Function to load saved devices and check python server status
   @override
   void initState() {
     super.initState();
     _loadSavedDevices();
+    _checkServerStatus();
+  }
+
+  Future<void> _checkServerStatus() async {
+    try {
+      final response = await http
+          .get(Uri.parse('http://127.0.0.1:5000/'))
+          .timeout(const Duration(seconds: 2));
+      setState(() {
+        _serverAvailable = response.statusCode == 200;
+      });
+    } catch (e) {
+      setState(() {
+        _serverAvailable = false;
+      });
+    }
   }
 
   // Load devices from SharedPreferences
@@ -48,29 +67,42 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
     await prefs.setString('devices', devicesJson);
   }
 
+  // Function to run the nmap scan
   Future<void> _runScan() async {
-    // Always show the accept terms dialog before scanning
-    bool? accepted = await showAcceptTermsDialog(context);
-    if (accepted == null || !accepted) {
+    if (!_serverAvailable) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Local server is not available')),
+      );
       return;
     }
 
-    // Proceed with scanning
-    setState(() {
-      _isLoading = true; // Show loading indicator
-      _scanInProgress = true; // Disable the scan button during the scan
-    });
-
-    // Parse Nmap output and convert it into a list of device details
-    List<Map<String, String>> scanResults = await runScan('192.168.0.0/24');
+    // Makes the user accept terms and conditions before scanning starts
+    bool? accepted = await showAcceptTermsDialog(context);
+    if (accepted == null || !accepted) return;
 
     setState(() {
-      _devices = scanResults;
-      _isLoading = false;
-      _scanInProgress = false;
+      _isLoading = true;
+      _scanInProgress = true;
     });
 
-    await _saveDevices();
+    try {
+      // Tries to run the scan by sending request to nmap service
+      List<Map<String, String>> scanResults = await runScan('192.168.0.0/24');
+      setState(() {
+        _devices = scanResults;
+      });
+      await _saveDevices();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Scan failed: ${e.toString()}')),
+      );
+    } finally {
+      // Once scan has completed or failed set loading and scan status back to false
+      setState(() {
+        _isLoading = false;
+        _scanInProgress = false;
+      });
+    }
   }
 
   @override
