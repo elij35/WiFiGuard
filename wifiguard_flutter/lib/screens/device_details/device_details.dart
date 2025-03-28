@@ -65,7 +65,7 @@ class DeviceDetailsScreen extends StatelessWidget {
     List<String> knownPorts = (device['open_ports'] is List)
         ? List<String>.from(device['open_ports'])
         : (device['open_ports'] is String)
-            ? (device['open_ports'] as String).split(',')
+            ? (device['open_ports'] as String).split(', ')
             : [];
 
     return Card(

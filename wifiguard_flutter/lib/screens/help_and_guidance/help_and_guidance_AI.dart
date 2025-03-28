@@ -19,7 +19,7 @@ class _HelpAndGuidanceAIScreenState extends State<HelpAndGuidanceAIScreen> {
   void initState() {
     super.initState();
     _chatHistory
-        .add("AI: Ask me anything about network security and best practices.");
+        .add("AI: \nAsk me anything about network security and best practices.");
   }
 
   void _fetchAIResponseForQuery() async {
@@ -28,7 +28,7 @@ class _HelpAndGuidanceAIScreenState extends State<HelpAndGuidanceAIScreen> {
 
     setState(() {
       _isLoading = true;
-      _chatHistory.add("You: $query");
+      _chatHistory.add("You: \n$query");
       _searchController.clear();
     });
 
@@ -36,7 +36,7 @@ class _HelpAndGuidanceAIScreenState extends State<HelpAndGuidanceAIScreen> {
     String response = await GeminiService.askQuestion(query, context: context);
 
     setState(() {
-      _chatHistory.add("AI: $response");
+      _chatHistory.add("AI: \n$response");
       _isLoading = false;
     });
 

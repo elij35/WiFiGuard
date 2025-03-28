@@ -21,7 +21,7 @@ class _DeviceDetailsAiScreenState extends State<DeviceDetailsAiScreen> {
   void initState() {
     super.initState();
     if (widget.ports.isNotEmpty) {
-      _chatHistory.add("List of open ports:\n${widget.ports.join('\n')}");
+      _chatHistory.add("You:\nTell me what these ports do and their risks when open: \n\n${widget.ports.join('\n')}");
       _fetchAIResponseForPorts();
     }
   }
