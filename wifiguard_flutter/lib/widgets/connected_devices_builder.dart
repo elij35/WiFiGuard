@@ -41,9 +41,11 @@ class ConnectedDevicesBuilder extends StatelessWidget {
       elevation: 3.0,
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: ListTile(
-        leading: Icon(_getDeviceIcon(device['device_type']), color: Colors.blue),
+        leading:
+            Icon(_getDeviceIcon(device['device_type']), color: Colors.blue),
         title: Text(
-          device['ip'] ?? 'Unknown IP',  // Show IP address or unknown if IP wasn't found (very unlikely)
+          device['ip'] ?? 'Unknown IP',
+          // Show IP address or unknown if IP wasn't found (very unlikely)
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Column(
@@ -96,19 +98,19 @@ class ConnectedDevicesBuilder extends StatelessWidget {
 
           // Conditional rendering based on loading state
           isLoading
-              ? const Center(child: CircularProgressIndicator())  // Show loader
+              ? const Center(child: CircularProgressIndicator()) // Show loader
               : Expanded(
-            child: devices.isEmpty
-                ? const Center(child: Text("No devices found."))
-                : ListView.separated(
-              itemCount: devices.length,
-              separatorBuilder: (context, index) =>
-              const SizedBox(height: 8),
-              itemBuilder: (context, index) {
-                return _buildDeviceCard(context, devices[index]);
-              },
-            ),
-          ),
+                  child: devices.isEmpty
+                      ? const Center(child: Text("No devices found."))
+                      : ListView.separated(
+                          itemCount: devices.length,
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: 8),
+                          itemBuilder: (context, index) {
+                            return _buildDeviceCard(context, devices[index]);
+                          },
+                        ),
+                ),
         ],
       ),
     );

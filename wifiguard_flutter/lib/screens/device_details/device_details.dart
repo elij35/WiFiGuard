@@ -97,7 +97,8 @@ class DeviceDetailsScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => DeviceDetailsAiScreen(ports: knownPorts),
+                    builder: (context) =>
+                        DeviceDetailsAiScreen(ports: knownPorts),
                   ),
                 );
               },

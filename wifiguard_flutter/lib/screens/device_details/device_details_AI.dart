@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 class DeviceDetailsAiScreen extends StatefulWidget {
   final List<String> ports;
 
-  const DeviceDetailsAiScreen({Key? key, required this.ports}) : super(key: key);
+  const DeviceDetailsAiScreen({Key? key, required this.ports})
+      : super(key: key);
 
   @override
   _DeviceDetailsAiScreenState createState() => _DeviceDetailsAiScreenState();
@@ -21,7 +22,8 @@ class _DeviceDetailsAiScreenState extends State<DeviceDetailsAiScreen> {
   void initState() {
     super.initState();
     if (widget.ports.isNotEmpty) {
-      _chatHistory.add("You:\nTell me what these ports do and their risks when open: \n\n${widget.ports.join('\n')}");
+      _chatHistory.add(
+          "You:\nTell me what these ports do and their risks when open: \n\n${widget.ports.join('\n')}");
       _fetchAIResponseForPorts();
     }
   }
@@ -32,7 +34,8 @@ class _DeviceDetailsAiScreenState extends State<DeviceDetailsAiScreen> {
     setState(() => _isLoading = true);
 
     String context = _chatHistory.join("\n");
-    String response = await GeminiService.getPortInfo(widget.ports, context: context);
+    String response =
+        await GeminiService.getPortInfo(widget.ports, context: context);
 
     setState(() {
       _chatHistory.add("AI:\n$response");
@@ -54,7 +57,8 @@ class _DeviceDetailsAiScreenState extends State<DeviceDetailsAiScreen> {
     });
 
     String context = _chatHistory.join("\n");
-    String response = await GeminiService.askQuestion(query.trim(), context: context);
+    String response =
+        await GeminiService.askQuestion(query.trim(), context: context);
 
     setState(() {
       _chatHistory.add("AI:\n$response");
@@ -98,27 +102,30 @@ class _DeviceDetailsAiScreenState extends State<DeviceDetailsAiScreen> {
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : Scrollbar(
-                child: SingleChildScrollView(
-                  controller: _scrollController,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: _chatHistory.map((message) => Card(
-                      elevation: 4,
-                      margin: const EdgeInsets.only(bottom: 8),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: SelectableText(
-                          message,
-                          style: const TextStyle(fontSize: 16, height: 1.5),
+                      child: SingleChildScrollView(
+                        controller: _scrollController,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: _chatHistory
+                              .map((message) => Card(
+                                    elevation: 4,
+                                    margin: const EdgeInsets.only(bottom: 8),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: SelectableText(
+                                        message,
+                                        style: const TextStyle(
+                                            fontSize: 16, height: 1.5),
+                                      ),
+                                    ),
+                                  ))
+                              .toList(),
                         ),
                       ),
-                    )).toList(),
-                  ),
-                ),
-              ),
+                    ),
             ),
 
             const SizedBox(height: 20),

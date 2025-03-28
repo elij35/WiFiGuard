@@ -18,8 +18,8 @@ class _HelpAndGuidanceAIScreenState extends State<HelpAndGuidanceAIScreen> {
   @override
   void initState() {
     super.initState();
-    _chatHistory
-        .add("AI: \nAsk me anything about network security and best practices.");
+    _chatHistory.add(
+        "AI: \nAsk me anything about network security and best practices.");
   }
 
   void _fetchAIResponseForQuery() async {
