@@ -7,19 +7,18 @@ class GeminiService {
   static const String _apiUrl =
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$_apiKey";
 
-  // Fetch port info (On device_details screen)
+  // Fetch AI response for device ports (On device_details screen)
   static Future<String> getPortInfo(List<String> ports,
       {String? context}) async {
     if (ports.isEmpty) return "No open ports detected.";
 
     String query = "For these ports: ${ports.join(', ')}, provide: "
-    "1. Short description (5-10 words)"
-    "2. Security risk level (Low/Medium/High/Critical)"
-    "3. Brief explanation (10 words max)"
-    "Then structure them as follows with a line gap between each: "
-    "Description: "
-    "Risk: "
-    "Why it's an issue: ";
+    "First line: Port Number: (number here) then one line gap "
+    "Second line: Description: A short description of what the protocol does (12 words max) then one line gap "
+    "Third line: Risk: Security risk level (Low/Medium/High/Critical) - then one line gap "
+    "Final line: Potential Issues: Brief explanation of why it's a risk (12 words max) - then one line gap "
+
+    "All outputs must use my structure nothing else should be outputted if there is more than one port use ____________________________ to separate the ports for neater formatting ";
 
     if (context != null) {
       query = "Context:\n$context\n\nQuestion: $query";

@@ -21,7 +21,7 @@ class _DeviceDetailsAiScreenState extends State<DeviceDetailsAiScreen> {
   void initState() {
     super.initState();
     if (widget.ports.isNotEmpty) {
-      _chatHistory.add("Detected ports: ${widget.ports.join(', ')}");
+      _chatHistory.add("List of open ports:\n${widget.ports.join('\n')}");
       _fetchAIResponseForPorts();
     }
   }
@@ -35,7 +35,7 @@ class _DeviceDetailsAiScreenState extends State<DeviceDetailsAiScreen> {
     String response = await GeminiService.getPortInfo(widget.ports, context: context);
 
     setState(() {
-      _chatHistory.add("AI: $response");
+      _chatHistory.add("AI:\n$response");
       _isLoading = false;
     });
 
@@ -49,15 +49,15 @@ class _DeviceDetailsAiScreenState extends State<DeviceDetailsAiScreen> {
 
     setState(() {
       _isLoading = true;
-      _chatHistory.add("You: $query");
+      _chatHistory.add("You:\n$query");
       _searchController.clear();
     });
 
     String context = _chatHistory.join("\n");
-    String response = await GeminiService.askQuestion(query, context: context);
+    String response = await GeminiService.askQuestion(query.trim(), context: context);
 
     setState(() {
-      _chatHistory.add("AI: $response");
+      _chatHistory.add("AI:\n$response");
       _isLoading = false;
     });
 
@@ -80,7 +80,7 @@ class _DeviceDetailsAiScreenState extends State<DeviceDetailsAiScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Ask AI")),
+      appBar: AppBar(title: const Text("Device Details AI")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

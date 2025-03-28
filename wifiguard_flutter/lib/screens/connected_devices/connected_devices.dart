@@ -70,6 +70,8 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
 
   // Function to run the nmap scan
   Future<void> _runScan() async {
+
+    //Checks if server is running
     if (!_serverAvailable) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Local server is not available')),
