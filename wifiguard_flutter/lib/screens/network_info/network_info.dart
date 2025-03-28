@@ -1,5 +1,5 @@
 import 'package:WiFiGuard/services/network_info_service.dart';
-import 'package:WiFiGuard/widgets/Network_info_builder.dart';
+import 'package:WiFiGuard/widgets/network_info_builder.dart';
 import 'package:flutter/material.dart';
 
 class NetworkInfoScreen extends StatefulWidget {
