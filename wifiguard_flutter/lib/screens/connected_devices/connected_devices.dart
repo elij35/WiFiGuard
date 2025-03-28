@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:WiFiGuard/screens/connected_devices/nmap_scan.dart';
+import 'package:WiFiGuard/services/nmap_scan.dart';
 import 'package:WiFiGuard/screens/connected_devices/terms_and_conditions.dart';
 import 'package:WiFiGuard/widgets/connected_devices_builder.dart';
 import 'package:flutter/material.dart';
