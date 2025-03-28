@@ -1,16 +1,16 @@
 import 'package:WiFiGuard/services/gemini_service.dart';
 import 'package:flutter/material.dart';
 
-class AskAIScreen extends StatefulWidget {
+class DeviceDetailsAiScreen extends StatefulWidget {
   final List<String> ports;
 
-  const AskAIScreen({Key? key, required this.ports}) : super(key: key);
+  const DeviceDetailsAiScreen({Key? key, required this.ports}) : super(key: key);
 
   @override
-  _AskAIScreenState createState() => _AskAIScreenState();
+  _DeviceDetailsAiScreenState createState() => _DeviceDetailsAiScreenState();
 }
 
-class _AskAIScreenState extends State<AskAIScreen> {
+class _DeviceDetailsAiScreenState extends State<DeviceDetailsAiScreen> {
   List<String> _chatHistory = [];
   bool _isLoading = false;
   final TextEditingController _searchController = TextEditingController();
