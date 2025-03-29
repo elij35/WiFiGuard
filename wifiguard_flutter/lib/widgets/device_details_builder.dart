@@ -7,12 +7,12 @@ class DeviceDetailsBuilder extends StatelessWidget {
   final String description;
 
   const DeviceDetailsBuilder({
-    Key? key,
+    super.key,
     required this.icon,
     required this.title,
     required this.value,
     required this.description,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

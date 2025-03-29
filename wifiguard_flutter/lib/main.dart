@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:WiFiGuard/screens/dashboard/dashboard.dart';
 import 'package:WiFiGuard/services/wifi_monitor_service.dart';
@@ -34,7 +35,7 @@ Future<ThemeMode> _loadThemeMode() async {
 
   // Fallback to system theme if no preference is found
   if (isDarkMode == null) {
-    return WidgetsBinding.instance.window.platformBrightness == Brightness.dark
+    return PlatformDispatcher.instance.platformBrightness == Brightness.dark
         ? ThemeMode.dark
         : ThemeMode.light;
   }
@@ -69,10 +70,8 @@ Future<void> _copyAndRunPythonScript() async {
 
     final File file = File(filePath);
     await file.writeAsBytes(byteData.buffer.asUint8List(), flush: true);
-
-    print("Python script copied successfully: $filePath");
   } catch (e) {
-    print("Error copying Python script: $e");
+    return;
   }
 }
 

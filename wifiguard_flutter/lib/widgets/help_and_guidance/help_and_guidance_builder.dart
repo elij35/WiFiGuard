@@ -7,6 +7,7 @@ class HelpTileWidget extends StatelessWidget {
   final Widget targetPage;
 
   const HelpTileWidget({
+    super.key,
     required this.icon,
     required this.title,
     required this.description,

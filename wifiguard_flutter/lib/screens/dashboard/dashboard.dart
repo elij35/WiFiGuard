@@ -68,7 +68,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         _wifiName = wifiName['ssid'] ?? 'Unknown';
       });
     } catch (e) {
-      print("Error loading network data: $e");
+      return;
     }
   }
 
@@ -77,8 +77,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     setState(() {
       _securityScore = 100;
       // Subtract points for weaker security or vulnerabilities
-      if (_wifiSecurity == 'WEP' || _wifiSecurity == 'Open/No Security')
+      if (_wifiSecurity == 'WEP' || _wifiSecurity == 'Open/No Security') {
         _securityScore -= 40;
+      }
       if (_hasOpenPorts) _securityScore -= 30;
     });
   }

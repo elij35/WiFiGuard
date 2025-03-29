@@ -19,7 +19,6 @@ class WifiMonitorService {
   Future<void> startMonitoring() async {
     // Prevent starting multiple monitoring tasks
     if (_isMonitoring) {
-      print('Monitoring is already in progress');
       return;
     }
 

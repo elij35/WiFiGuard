@@ -17,8 +17,7 @@ class NetworkService {
         'frequency': networkInfo['frequency'] ?? 'Unknown',
         'security': networkInfo['security'] ?? 'Unknown',
       };
-    } on PlatformException catch (e) {
-      print("Failed to get network info: '${e.message}'");
+    } on PlatformException {
       return {
         'ssid': 'Error',
         'bssid': 'Error',

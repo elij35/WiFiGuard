@@ -2,15 +2,14 @@ import 'package:WiFiGuard/services/gemini_service.dart';
 import 'package:flutter/material.dart';
 
 class HelpAndGuidanceAIScreen extends StatefulWidget {
-  const HelpAndGuidanceAIScreen({Key? key}) : super(key: key);
+  const HelpAndGuidanceAIScreen({super.key});
 
   @override
-  _HelpAndGuidanceAIScreenState createState() =>
-      _HelpAndGuidanceAIScreenState();
+  HelpAndGuidanceAIScreenState createState() => HelpAndGuidanceAIScreenState();
 }
 
-class _HelpAndGuidanceAIScreenState extends State<HelpAndGuidanceAIScreen> {
-  List<String> _chatHistory = [];
+class HelpAndGuidanceAIScreenState extends State<HelpAndGuidanceAIScreen> {
+  final List<String> _chatHistory = [];
   bool _isLoading = false;
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
