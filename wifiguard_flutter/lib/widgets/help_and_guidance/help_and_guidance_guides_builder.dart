@@ -8,7 +8,6 @@ class TileBuilder {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Card(
-        elevation: 3.0,
         child: ListTile(
           title: Text(
             text,

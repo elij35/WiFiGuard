@@ -21,9 +21,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   // Scan interval options in minutes
   final List<int> scanIntervals = [
-    30, // 30 minutes
-    60, // 1 hour
-    180, // 3 hours
     360, // 6 hours
     720, // 12 hours
     1440, // 1 day

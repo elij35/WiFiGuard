@@ -26,7 +26,6 @@ class DashboardBuilder {
     required Widget securityButton,
   }) {
     return Card(
-      elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -84,8 +83,6 @@ class DashboardBuilder {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text("Network Security Score",
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         const SizedBox(height: 16),
         Stack(
           alignment: Alignment.center,

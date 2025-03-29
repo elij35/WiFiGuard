@@ -3,8 +3,10 @@ import 'package:WiFiGuard/widgets/device_details_builder.dart';
 import 'package:flutter/material.dart';
 
 class DeviceDetailsScreen extends StatelessWidget {
-  final Map<String, String> device; // String for the device data structure (includes info about the device from nmap scan - IP address, MAC address, OS, etc)
-  final List<String> knownPorts; // The open ports of the device sent from connected devices builder
+  final Map<String, String>
+      device; // String for the device data structure (includes info about the device from nmap scan - IP address, MAC address, OS, etc)
+  final List<String>
+      knownPorts; // The open ports of the device sent from connected devices builder
 
   const DeviceDetailsScreen({
     super.key,
@@ -68,7 +70,7 @@ class DeviceDetailsScreen extends StatelessWidget {
   Widget _buildOpenPortsSection(BuildContext context) {
     return Card(
       elevation: 3,
-      margin: const EdgeInsets.symmetric(vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: 6),
       child: Column(
         children: [
           ListTile(
@@ -97,8 +99,7 @@ class DeviceDetailsScreen extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => DeviceDetailsAiScreen(
                       ports: knownPorts,
-                      deviceIp: device['ip'] ??
-                          'Unknown',
+                      deviceIp: device['ip'] ?? 'Unknown',
                     ),
                   ),
                 );
@@ -107,9 +108,9 @@ class DeviceDetailsScreen extends StatelessWidget {
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
                 padding:
-                    const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
                 textStyle:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),

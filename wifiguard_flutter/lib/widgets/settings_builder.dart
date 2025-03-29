@@ -9,7 +9,6 @@ class SettingsBuilder {
     required Color activeColor,
   }) {
     return Card(
-      elevation: 3.0,
       margin: const EdgeInsets.symmetric(vertical: 6),
       child: ListTile(
         leading: Icon(Icons.settings, color: Colors.blue),

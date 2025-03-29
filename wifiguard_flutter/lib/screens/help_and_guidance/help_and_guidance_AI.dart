@@ -56,7 +56,7 @@ class _HelpAndGuidanceAIScreenState extends State<HelpAndGuidanceAIScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("AI Help & Guidance")),
+      appBar: AppBar(title: const Text("AI Help and Guidance")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -77,7 +77,6 @@ class _HelpAndGuidanceAIScreenState extends State<HelpAndGuidanceAIScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: _chatHistory
                               .map((message) => Card(
-                                    elevation: 4,
                                     margin: const EdgeInsets.only(bottom: 8),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12),

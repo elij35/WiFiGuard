@@ -193,10 +193,12 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
         actions: [
           DropdownButton<String>(
             value: _filterType,
-            items: _availableFilters.map((type) => DropdownMenuItem(
-              value: type,
-              child: Text(type),
-            )).toList(),
+            items: _availableFilters
+                .map((type) => DropdownMenuItem(
+                      value: type,
+                      child: Text(type),
+                    ))
+                .toList(),
             onChanged: (value) {
               setState(() {
                 _filterType = value!;

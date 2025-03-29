@@ -69,8 +69,7 @@ class _DeviceDetailsAiScreenState extends State<DeviceDetailsAiScreen> {
 
     setState(() => _isLoading = true);
     _chatHistory.add(
-        "You:\nTell me what these ports do and their risks when open: \n\n${widget
-            .ports.join('\n')}");
+        "You:\nTell me what these ports do and their risks when open: \n\n${widget.ports.join('\n')}");
     _saveChatHistory();
 
     // Process each port individually but include all ports in context
@@ -168,7 +167,6 @@ class _DeviceDetailsAiScreenState extends State<DeviceDetailsAiScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: _chatHistory
                               .map((message) => Card(
-                                    elevation: 4,
                                     margin: const EdgeInsets.only(bottom: 8),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12),

@@ -19,7 +19,6 @@ class NetworkInfoBuilder {
   static Widget buildNetworkInfoCard(
       IconData icon, String label, String value) {
     return Card(
-      elevation: 3.0,
       margin: const EdgeInsets.symmetric(vertical: 6.0),
       child: ListTile(
         leading: Icon(icon, color: Colors.blue),
@@ -46,7 +45,6 @@ class NetworkInfoBuilder {
     }
 
     return Card(
-      elevation: 3.0,
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: ListTile(
         leading: Icon(icon, color: iconColor),

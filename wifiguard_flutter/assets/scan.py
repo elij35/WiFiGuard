@@ -1,6 +1,7 @@
 import ipaddress
 import socket
 from concurrent.futures import ThreadPoolExecutor, as_completed
+
 import nmap
 import scapy.all as scapy
 from flask import Flask, request, jsonify
@@ -98,6 +99,7 @@ def get_device_type(os_info):
         return "Gaming Console"
 
     return "Unknown Device"
+
 
 def analyse_open_ports(ports):
     """List of common ports and their protocol name"""

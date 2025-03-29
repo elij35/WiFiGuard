@@ -29,8 +29,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   String _wifiName = 'Unknown';
   int _securityScore = 100;
-  bool _hasOpenPorts = false;
-  String _wifiSecurity = 'WPA2';
+  final bool _hasOpenPorts = false;
+  final String _wifiSecurity = 'WPA2';
 
   @override
   void initState() {
@@ -110,18 +110,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
       appBar: AppBar(
         title: const Text('Dashboard'),
         actions: [
-          // Settings button to navigate to SettingsScreen
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SettingsScreen(
-                      themeModeNotifier: widget.themeModeNotifier),
-                ),
-              );
-            },
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 8.0), // Adjust if needed
+            // Settings button to navigate to SettingsScreen
+            child: IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SettingsScreen(
+                        themeModeNotifier: widget.themeModeNotifier),
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),
