@@ -7,14 +7,13 @@ class DeviceDetailsAiScreen extends StatefulWidget {
   final String deviceIp;
 
   const DeviceDetailsAiScreen(
-      {Key? key, required this.ports, required this.deviceIp})
-      : super(key: key);
+      {super.key, required this.ports, required this.deviceIp});
 
   @override
-  _DeviceDetailsAiScreenState createState() => _DeviceDetailsAiScreenState();
+  DeviceDetailsAiScreenState createState() => DeviceDetailsAiScreenState();
 }
 
-class _DeviceDetailsAiScreenState extends State<DeviceDetailsAiScreen> {
+class DeviceDetailsAiScreenState extends State<DeviceDetailsAiScreen> {
   List<String> _chatHistory = [];
   bool _isLoading = false;
   final TextEditingController _searchController = TextEditingController();
@@ -24,7 +23,7 @@ class _DeviceDetailsAiScreenState extends State<DeviceDetailsAiScreen> {
       'device_ai_chat'; // Prefix for shared prefs keys
 
   String get _prefsKey =>
-      '${_prefsKeyPrefix}${widget.deviceIp}'; // Creates a unique key for each device
+      '$_prefsKeyPrefix${widget.deviceIp}'; // Creates a unique key for each device
 
   @override
   void initState() {

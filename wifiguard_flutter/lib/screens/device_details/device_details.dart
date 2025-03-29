@@ -1,4 +1,4 @@
-import 'package:WiFiGuard/screens/device_details/device_details_AI.dart';
+import 'package:WiFiGuard/screens/device_details/device_details_ai.dart';
 import 'package:WiFiGuard/widgets/device_details_builder.dart';
 import 'package:flutter/material.dart';
 
