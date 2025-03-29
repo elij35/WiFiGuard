@@ -3,9 +3,14 @@ import 'package:WiFiGuard/widgets/device_details_builder.dart';
 import 'package:flutter/material.dart';
 
 class DeviceDetailsScreen extends StatelessWidget {
-  final Map<String, dynamic> device;
+  final Map<String, String> device; // String for the device data structure (includes info about the device from nmap scan - IP address, MAC address, OS, etc)
+  final List<String> knownPorts; // The open ports of the device sent from connected devices builder
 
-  const DeviceDetailsScreen({Key? key, required this.device}) : super(key: key);
+  const DeviceDetailsScreen({
+    super.key,
+    required this.device,
+    required this.knownPorts,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -61,13 +66,6 @@ class DeviceDetailsScreen extends StatelessWidget {
 
   // Builds the open ports section for the device
   Widget _buildOpenPortsSection(BuildContext context) {
-    // Convert open ports from device data to a list of strings
-    List<String> knownPorts = (device['open_ports'] is List)
-        ? List<String>.from(device['open_ports'])
-        : (device['open_ports'] is String)
-            ? (device['open_ports'] as String).split(', ')
-            : [];
-
     return Card(
       elevation: 3,
       margin: const EdgeInsets.symmetric(vertical: 8),
@@ -97,8 +95,11 @@ class DeviceDetailsScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        DeviceDetailsAiScreen(ports: knownPorts),
+                    builder: (context) => DeviceDetailsAiScreen(
+                      ports: knownPorts,
+                      deviceIp: device['ip'] ??
+                          'Unknown',
+                    ),
                   ),
                 );
               },

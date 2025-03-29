@@ -17,9 +17,7 @@ class GeminiService {
         "Second line: Description: A short description of what the protocol does (12 words max) then one line gap "
         "Third line: Risk: Security risk level (Low/Medium/High/Critical) - then one line gap "
         "Final line: Potential Issues: Brief explanation of why it's a risk (12 words max) - then one line gap "
-        "All outputs must use my structure nothing else should be outputted. "
-        "Use this ____________________________________________ "
-        "to separate the ports ONLY IF there is more than one port give and format it with a gap then that then the next port number ";
+        "All outputs must use my structure nothing else should be outputted. ";
 
     if (context != null) {
       query = "Context:\n$context\n\nQuestion: $query";

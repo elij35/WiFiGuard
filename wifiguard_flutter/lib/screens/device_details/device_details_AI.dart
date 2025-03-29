@@ -1,10 +1,13 @@
 import 'package:WiFiGuard/services/gemini_service.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DeviceDetailsAiScreen extends StatefulWidget {
   final List<String> ports;
+  final String deviceIp;
 
-  const DeviceDetailsAiScreen({Key? key, required this.ports})
+  const DeviceDetailsAiScreen(
+      {Key? key, required this.ports, required this.deviceIp})
       : super(key: key);
 
   @override
@@ -17,52 +20,96 @@ class _DeviceDetailsAiScreenState extends State<DeviceDetailsAiScreen> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController =
       ScrollController(); // For scrolling to new responses
+  final String _prefsKeyPrefix =
+      'device_ai_chat'; // Prefix for shared prefs keys
+
+  String get _prefsKey =>
+      '${_prefsKeyPrefix}${widget.deviceIp}'; // Creates a unique key for each device
 
   @override
   void initState() {
     super.initState();
-    if (widget.ports.isNotEmpty) {
-      _chatHistory.add(
-          "You:\nTell me what these ports do and their risks when open: \n\n${widget.ports.join('\n')}");
-      _fetchAIResponseForPorts();
+    _loadChatHistory().then((_) {
+      if (widget.ports.isNotEmpty && _chatHistory.isEmpty) {
+        // Only asks AI about ports if this is a new AI chat for this device (otherwise grabs previous response from shared preferences)
+        _askAboutPorts();
+      }
+    });
+  }
+
+  // Loads chat history of the current device from shared preferences
+  Future<void> _loadChatHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedHistory = prefs.getStringList(_prefsKey);
+    if (savedHistory != null) {
+      setState(() {
+        _chatHistory = savedHistory;
+      });
     }
   }
 
-  // Fetch AI-generated info about the detected open ports
-  void _fetchAIResponseForPorts() async {
-    if (widget.ports.isEmpty) return; // No ports, nothing to analyse
-    setState(() => _isLoading = true);
+  // Saves any AI responses or user messages into shared preferences using the IP address as the custom key
+  Future<void> _saveChatHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(_prefsKey, _chatHistory);
+  }
 
-    String context = _chatHistory.join("\n");
-    String response =
-        await GeminiService.getPortInfo(widget.ports, context: context);
-
+  // Option in top right of screen to clear the chat history
+  Future<void> _clearChatHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_prefsKey);
     setState(() {
-      _chatHistory.add("AI:\n$response");
-      _isLoading = false;
+      _chatHistory = [];
     });
+  }
 
-    _scrollToBottom(); // Scroll down to display new response
+  // Ask about ports for the device clicked on
+  void _askAboutPorts() async {
+    if (widget.ports.isEmpty) return;
+
+    setState(() => _isLoading = true);
+    "You:\nTell me what these ports do and their risks when open: \n\n${widget.ports.join('\n')}";
+
+    // Process each port individually
+    for (final port in widget.ports) {
+      try {
+        final response = await GeminiService.getPortInfo([port]);
+        setState(() {
+          _chatHistory.add("AI:\n$response");
+          _saveChatHistory();
+        });
+      } catch (e) {
+        setState(() {
+          _chatHistory.add("AI:\nFailed to get info for port $port");
+          _saveChatHistory();
+        });
+      }
+    }
+
+    setState(() => _isLoading = false);
+    _scrollToBottom();
   }
 
   // Fetch AI response based on user's custom query
   void _fetchAIResponseForQuery() async {
-    String query = _searchController.text.trim();
+    final query = _searchController.text.trim();
     if (query.isEmpty) return; // Don't send empty queries
 
     setState(() {
       _isLoading = true;
       _chatHistory.add("You:\n$query");
       _searchController.clear();
+      _saveChatHistory();
     });
 
-    String context = _chatHistory.join("\n");
-    String response =
-        await GeminiService.askQuestion(query.trim(), context: context);
+    final response = await GeminiService.askQuestion(
+      "Regarding device ${widget.deviceIp}: $query",
+    );
 
     setState(() {
       _chatHistory.add("AI:\n$response");
       _isLoading = false;
+      _saveChatHistory();
     });
 
     _scrollToBottom(); // Scroll down to new response
@@ -84,7 +131,16 @@ class _DeviceDetailsAiScreenState extends State<DeviceDetailsAiScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Device Details AI")),
+      appBar: AppBar(
+        title: Text("${widget.deviceIp} Details"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: _clearChatHistory,
+            tooltip: 'Clear chat history',
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -134,7 +190,7 @@ class _DeviceDetailsAiScreenState extends State<DeviceDetailsAiScreen> {
             TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                labelText: "Ask AI about networking or computing",
+                labelText: "Ask about ${widget.deviceIp}",
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.send),
                   onPressed: _fetchAIResponseForQuery,

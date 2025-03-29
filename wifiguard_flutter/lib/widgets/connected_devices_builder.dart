@@ -67,7 +67,8 @@ class ConnectedDevicesBuilder extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => DeviceDetailsScreen(device: device),
+              builder: (context) =>
+                  DeviceDetailsScreen(device: device, knownPorts: ports),
             ),
           );
         },
