@@ -68,22 +68,23 @@ class _DeviceDetailsAiScreenState extends State<DeviceDetailsAiScreen> {
     if (widget.ports.isEmpty) return;
 
     setState(() => _isLoading = true);
-    "You:\nTell me what these ports do and their risks when open: \n\n${widget.ports.join('\n')}";
+    _chatHistory.add(
+        "You:\nTell me what these ports do and their risks when open: \n\n${widget
+            .ports.join('\n')}");
+    _saveChatHistory();
 
-    // Process each port individually
-    for (final port in widget.ports) {
-      try {
-        final response = await GeminiService.getPortInfo([port]);
-        setState(() {
-          _chatHistory.add("AI:\n$response");
-          _saveChatHistory();
-        });
-      } catch (e) {
-        setState(() {
-          _chatHistory.add("AI:\nFailed to get info for port $port");
-          _saveChatHistory();
-        });
-      }
+    // Process each port individually but include all ports in context
+    try {
+      final response = await GeminiService.getPortInfo(widget.ports);
+      setState(() {
+        _chatHistory.add("AI:\n$response");
+        _saveChatHistory();
+      });
+    } catch (e) {
+      setState(() {
+        _chatHistory.add("AI:\nFailed to get port information");
+        _saveChatHistory();
+      });
     }
 
     setState(() => _isLoading = false);
@@ -102,8 +103,11 @@ class _DeviceDetailsAiScreenState extends State<DeviceDetailsAiScreen> {
       _saveChatHistory();
     });
 
-    final response = await GeminiService.askQuestion(
+    // Include the entire chat history as context
+    String context = _chatHistory.join("\n");
+    String response = await GeminiService.askQuestion(
       "Regarding device ${widget.deviceIp}: $query",
+      context: context, // Pass the full chat history as context
     );
 
     setState(() {
