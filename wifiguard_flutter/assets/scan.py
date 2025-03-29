@@ -43,14 +43,62 @@ def get_live_hosts(network):
 def get_device_type(os_info):
     """Returns device type based on the OS"""
     os_info = os_info.lower()
-    if "windows" in os_info or "linux" in os_info:
-        return "PC/Laptop"
-    if "android" in os_info:
-        return "Mobile Device"
-    if "ios" in os_info or "mac" in os_info:
-        return "Apple Device"
-    return "Unknown Device"
 
+    # PC/Laptop checks
+    pc_keywords = [
+        'windows', 'linux', 'ubuntu', 'debian', 'fedora',
+        'centos', 'macos', 'mac os', 'microsoft', 'pc',
+        'desktop', 'notebook', 'laptop', 'thinkpad', 'surface'
+    ]
+    if any(keyword in os_info for keyword in pc_keywords):
+        return "PC/Laptop"
+
+    # Mobile Device checks
+    mobile_keywords = [
+        'android', 'mobile', 'phone', 'tablet', 'galaxy',
+        'redmi', 'pixel', 'oneplus', 'xiaomi', 'nokia',
+        'oppo', 'vivo', 'realme', 'huawei', 'honor',
+        'poco', 'motorola', 'lg', 'sony', 'htc'
+    ]
+    if any(keyword in os_info for keyword in mobile_keywords):
+        return "Mobile Device"
+
+    # Apple Device checks
+    apple_keywords = [
+        'ios', 'mac', 'iphone', 'ipad', 'apple', 'imac',
+        'macbook', 'airpod', 'apple tv', 'ipod', 'watchos'
+    ]
+    if any(keyword in os_info for keyword in apple_keywords):
+        return "Apple Device"
+
+    # Router checks
+    router_keywords = [
+        'router', 'modem', 'access point', 'ap', 'cisco',
+        'tplink', 'netgear', 'asus', 'linksys', 'fritzbox',
+        'd-link', 'ubiquiti', 'mikrotik'
+    ]
+    if any(keyword in os_info for keyword in router_keywords):
+        return "Router"
+
+    # IoT Device checks
+    iot_keywords = [
+        'iot', 'smart', 'echo', 'google home', 'nest',
+        'thermostat', 'camera', 'ring', 'alexa', 'printer',
+        'scanner', 'smart tv', 'roku', 'fire tv', 'chromecast',
+        'philips hue', 'smart bulb', 'smart plug'
+    ]
+    if any(keyword in os_info for keyword in iot_keywords):
+        return "IoT Device"
+
+    # Gaming Console checks
+    gaming_keywords = [
+        'playstation', 'xbox', 'nintendo', 'switch', 'ps5',
+        'ps4', 'xbox one', 'xbox series', 'wii', 'playstation vita'
+    ]
+    if any(keyword in os_info for keyword in gaming_keywords):
+        return "Gaming Console"
+
+    return "Unknown Device"
 
 def analyse_open_ports(ports):
     """List of common ports and their protocol name"""

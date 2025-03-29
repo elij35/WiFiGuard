@@ -17,18 +17,23 @@ class ConnectedDevicesBuilder extends StatelessWidget {
   });
 
   // Returns an icon based on device type
-  IconData _getDeviceIcon(String? type) {
-    if (type == null) return Icons.devices_other;
-
-    final lowerType = type.toLowerCase();
-    if (lowerType.contains('pc') || lowerType.contains('laptop')) {
-      return Icons.laptop;
-    } else if (lowerType.contains('mobile')) {
-      return Icons.smartphone;
-    } else if (lowerType.contains('apple')) {
-      return Icons.phone_iphone;
+  IconData _getDeviceIcon(String? deviceType) {
+    switch (deviceType?.toLowerCase()) {
+      case 'pc/laptop':
+        return Icons.laptop;
+      case 'mobile device':
+        return Icons.smartphone;
+      case 'apple device':
+        return Icons.phone_iphone;
+      case 'router':
+        return Icons.router;
+      case 'iot device':
+        return Icons.smart_toy;
+      case 'gaming console':
+        return Icons.sports_esports;
+      default:
+        return Icons.devices_other;
     }
-    return Icons.devices_other;
   }
 
   // Builds a card widget for each device

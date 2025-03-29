@@ -21,6 +21,15 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
   bool _scanInProgress = false; // Flag to check scan status
   bool _serverAvailable = false;
   String _filterType = "All";
+  final List<String> _availableFilters = [
+    "All",
+    "PC/Laptop",
+    "Mobile Device",
+    "Apple Device",
+    "Router",
+    "IoT Device",
+    "Unknown"
+  ];
 
   // Function to load saved devices and check python server status
   @override
@@ -140,13 +149,36 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
 
     return _devices.where((device) {
       final type = device['device_type']?.toLowerCase() ?? '';
+      final os = device['os']?.toLowerCase() ?? '';
+
       switch (_filterType) {
         case "PC/Laptop":
-          return type.contains('pc') || type.contains('laptop');
+          return type.contains('pc') ||
+              type.contains('laptop') ||
+              os.contains('windows') ||
+              os.contains('macos') ||
+              os.contains('linux');
         case "Mobile Device":
-          return type.contains('mobile');
+          return type.contains('mobile') ||
+              os.contains('android') ||
+              os.contains('ios');
         case "Apple Device":
-          return type.contains('apple');
+          return type.contains('apple') ||
+              os.contains('macos') ||
+              os.contains('ios');
+        case "Router":
+          return type.contains('router') ||
+              os.contains('router') ||
+              device['ip']?.startsWith('192.168.1.1') == true;
+        case "IoT Device":
+          return type.contains('iot') ||
+              type.contains('smart') ||
+              type.contains('printer') ||
+              type.contains('camera');
+        case "Unknown":
+          return type.isEmpty ||
+              device['device_type'] == null ||
+              device['device_type']!.toLowerCase() == 'unknown';
         default:
           return true;
       }
@@ -157,16 +189,14 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Connected Devices'),
+        title: const Text('Connected Devices'),
         actions: [
           DropdownButton<String>(
             value: _filterType,
-            items: ["All", "PC/Laptop", "Mobile Device", "Apple Device"]
-                .map((type) => DropdownMenuItem(
-                      value: type,
-                      child: Text(type),
-                    ))
-                .toList(),
+            items: _availableFilters.map((type) => DropdownMenuItem(
+              value: type,
+              child: Text(type),
+            )).toList(),
             onChanged: (value) {
               setState(() {
                 _filterType = value!;
