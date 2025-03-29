@@ -30,6 +30,23 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
     _checkServerStatus();
   }
 
+  // Helper function to sort IP addresses numerically
+  int _compareIpAddresses(String ip1, String ip2) {
+    try {
+      List<int> parts1 = ip1.split('.').map((part) => int.parse(part)).toList();
+      List<int> parts2 = ip2.split('.').map((part) => int.parse(part)).toList();
+
+      for (int i = 0; i < 4; i++) {
+        if (parts1[i] < parts2[i]) return -1;
+        if (parts1[i] > parts2[i]) return 1;
+      }
+      return 0;
+    } catch (e) {
+      return ip1
+          .compareTo(ip2); // Fallback to string comparison if parsing fails
+    }
+  }
+
   Future<void> _checkServerStatus() async {
     try {
       final response = await http
@@ -57,6 +74,11 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
               .decode(savedDevices)
               .map((item) => Map<String, String>.from(item)),
         );
+        // Sort devices by IP address
+        _devices.sort((a, b) => _compareIpAddresses(
+              a['ip'] ?? '0.0.0.0',
+              b['ip'] ?? '0.0.0.0',
+            ));
       });
     }
   }
@@ -90,6 +112,11 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
     try {
       // Tries to run the scan by sending request to nmap service
       List<Map<String, String>> scanResults = await runScan('192.168.0.0/24');
+      // Sort the scan results by IP address
+      scanResults.sort((a, b) => _compareIpAddresses(
+            a['ip'] ?? '0.0.0.0',
+            b['ip'] ?? '0.0.0.0',
+          ));
       setState(() {
         _devices = scanResults;
       });
