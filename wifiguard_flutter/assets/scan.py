@@ -1,7 +1,6 @@
 import ipaddress
 import socket
 from concurrent.futures import ThreadPoolExecutor, as_completed
-
 import nmap
 import scapy.all as scapy
 from flask import Flask, request, jsonify
@@ -178,7 +177,7 @@ def health_check():
 def run_flask_server():
     """Starts the Flask server"""
     print("Starting Flask server...")
-    app.run(host='127.0.0.1', port=5000, debug=False)
+    app.run(host='127.0.0.1', port=5000, debug=False, threaded=True)
 
 
 if __name__ == "__main__":
