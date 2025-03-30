@@ -7,29 +7,24 @@ import 'package:http/http.dart' as http;
 Future<List<Map<String, String>>> runScan(String target) async {
   List<Map<String, String>> devices = [];
 
-  try {
-    // Sending a POST request to the local server to trigger the scan
-    final response = await http.post(
-      Uri.parse('http://127.0.0.1:5000/scan'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({'target': target}), // Encode the target as JSON
-    );
+  // Sending a POST request to the local server to trigger the scan
+  final response = await http.post(
+    Uri.parse('http://127.0.0.1:5000/scan'),
+    headers: {'Content-Type': 'application/json'},
+    body: json.encode({'target': target}), // Encode the target as JSON
+  );
 
-    // If the scan is successful (status code 200), parse the response
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> responseJson = json.decode(response.body);
-      final List<dynamic> scanResult = responseJson['scan_result'] ?? [];
+  // If the scan is successful (status code 200), parse the response
+  if (response.statusCode == 200) {
+    final Map<String, dynamic> responseJson = json.decode(response.body);
+    final List<dynamic> scanResult = responseJson['scan_result'] ?? [];
 
-      // Parse the Nmap scan result into a list of device details
-      devices = parseNmapOutput(scanResult);
-    } else {
-      // If the scan fails, throw an exception with the error message
-      throw Exception(
-          "Failed to scan network, Status code: ${response.statusCode}");
-    }
-  } catch (e) {
-    // Log any error during the scan process (e.g., network issues)
-    print("Error during scan: $e");
+    // Parse the Nmap scan result into a list of device details
+    devices = parseNmapOutput(scanResult);
+  } else {
+    // If the scan fails, throw an exception with the error message
+    throw Exception(
+        "Failed to scan network, Status code: ${response.statusCode}");
   }
 
   return devices; // Return the list of devices found during the scan
