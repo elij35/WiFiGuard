@@ -65,7 +65,7 @@ def get_device_type(os_info):
 
     # Apple Device checks
     apple_keywords = [
-        'ios', 'mac', 'iphone', 'ipad', 'apple', 'imac',
+        'ios', 'macOS', 'iphone', 'ipad', 'apple', 'imac',
         'macbook', 'airpod', 'apple tv', 'ipod', 'watchos'
     ]
     if any(keyword in os_info for keyword in apple_keywords):
@@ -123,7 +123,7 @@ def analyse_open_ports(ports):
             name = port_info[port]
             results.append(f"Port {port}: {name}")
         else:
-            results.append(f"Port {port}: Unknown")
+            results.append(f"Port {port}")
 
     return results
 
