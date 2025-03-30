@@ -95,19 +95,22 @@ class HelpAndGuidanceAIScreenState extends State<HelpAndGuidanceAIScreen> {
                     ),
             ),
             const SizedBox(height: 20),
-            TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                labelText: "Ask AI about networking or computing",
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.send),
-                  onPressed: _fetchAIResponseForQuery,
+            Padding(
+              padding: const EdgeInsets.only(bottom: 25),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  labelText: "Ask AI about networking or computing",
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.send),
+                    onPressed: _fetchAIResponseForQuery,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                onSubmitted: (_) => _fetchAIResponseForQuery(),
               ),
-              onSubmitted: (_) => _fetchAIResponseForQuery(),
             ),
           ],
         ),

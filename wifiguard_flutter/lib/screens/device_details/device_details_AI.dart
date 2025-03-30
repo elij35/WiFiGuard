@@ -188,20 +188,23 @@ class DeviceDetailsAiScreenState extends State<DeviceDetailsAiScreen> {
             const SizedBox(height: 20),
 
             // Search box for custom AI questions
-            TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                labelText: "Ask about ${widget.deviceIp}",
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.send),
-                  onPressed: _fetchAIResponseForQuery,
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  labelText: "Ask about ${widget.deviceIp}",
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.send),
+                    onPressed: _fetchAIResponseForQuery,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                onSubmitted: (_) =>
+                    _fetchAIResponseForQuery(), // Allows pressing 'Enter' to send
               ),
-              onSubmitted: (_) =>
-                  _fetchAIResponseForQuery(), // Allows pressing 'Enter' to send
             ),
           ],
         ),
