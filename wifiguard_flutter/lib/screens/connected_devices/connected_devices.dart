@@ -191,18 +191,20 @@ class ConnectedDevicesScreenState extends State<ConnectedDevicesScreen> {
       appBar: AppBar(
         title: const Text('Connected Devices'),
         actions: [
-          DropdownButton<String>(
-            value: _filterType,
-            items: _availableFilters
-                .map((type) => DropdownMenuItem(
-                      value: type,
-                      child: Text(type),
-                    ))
-                .toList(),
-            onChanged: (value) {
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.filter_alt),
+            onSelected: (value) {
               setState(() {
-                _filterType = value!;
+                _filterType = value;
               });
+            },
+            itemBuilder: (BuildContext context) {
+              return _availableFilters.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList();
             },
           ),
         ],
