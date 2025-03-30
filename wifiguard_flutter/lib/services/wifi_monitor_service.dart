@@ -79,7 +79,7 @@ class WifiMonitorService {
     // Alert user if the network is insecure
     if (security == 'WEP' || security == 'Open/No Security') {
       await _notificationService.showNotification(
-        '⚠️ Insecure Wi-Fi Detected',
+        'Warning: Insecure Wi-Fi Detected',
         'Your current network uses $security security. Consider switching to a more secure network.',
       );
     }
