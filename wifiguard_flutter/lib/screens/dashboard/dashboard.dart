@@ -6,6 +6,7 @@ import 'package:WiFiGuard/screens/network_info/network_info.dart';
 import 'package:WiFiGuard/screens/network_security_score/network_security_score.dart';
 import 'package:WiFiGuard/screens/settings/settings.dart';
 import 'package:WiFiGuard/services/network_info_service.dart';
+import 'package:WiFiGuard/services/network_security_score_service.dart';
 import 'package:WiFiGuard/widgets/dashboard_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -24,13 +25,15 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   final NetworkService _networkService = NetworkService();
+  final NetworkSecurityScoreService _securityScoreService =
+      NetworkSecurityScoreService();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
 
   String _wifiName = 'Unknown';
+  String _wifiSecurity = 'Unknown';
   int _securityScore = 100;
   final bool _hasOpenPorts = false;
-  final String _wifiSecurity = 'WPA2';
 
   @override
   void initState() {
@@ -41,7 +44,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Future<void> _loadData() async {
     await _loadNetworkData();
-    _calculateSecurityScore();
+    _securityScore = _securityScoreService.calculateSecurityScore(
+        _wifiSecurity, _hasOpenPorts);
   }
 
   // Request permissions (location, notifications, storage)
@@ -63,25 +67,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Future<void> _loadNetworkData() async {
     try {
       // Fetch Wi-Fi name
-      final wifiName = await _networkService.getNetworkInfo();
+      final wifiInfo = await _networkService.getNetworkInfo();
       setState(() {
-        _wifiName = wifiName['ssid'] ?? 'Unknown';
+        _wifiName = wifiInfo['ssid'] ?? 'Unknown';
+        _wifiSecurity = wifiInfo['security'] ?? 'Unknown';
       });
     } catch (e) {
       return;
     }
-  }
-
-  // Calculate security score based on Wi-Fi security and open ports
-  void _calculateSecurityScore() {
-    setState(() {
-      _securityScore = 100;
-      // Subtract points for weaker security or vulnerabilities
-      if (_wifiSecurity == 'WEP' || _wifiSecurity == 'Open/No Security') {
-        _securityScore -= 40;
-      }
-      if (_hasOpenPorts) _securityScore -= 30;
-    });
   }
 
   // Navigate to Security Details screen when "Improve Security" is pressed
@@ -89,7 +82,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => SecurityDetailsScreen(
+        builder: (context) => NetworkSecurityScoreScreen(
           securityScore: _securityScore,
           wifiSecurity: _wifiSecurity,
           hasOpenPorts: _hasOpenPorts,
@@ -100,20 +93,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final Color scoreColor = _securityScore >= 80
-        ? Colors.green
-        : (_securityScore >= 50 ? Colors.orange : Colors.red);
-    final String securityLevel = _securityScore >= 80
-        ? "Secure"
-        : (_securityScore >= 50 ? "Moderate" : "Vulnerable");
+    final Color scoreColor =
+        _securityScoreService.getScoreColor(_securityScore);
+    final String securityLevel =
+        _securityScoreService.getSecurityLevel(_securityScore);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dashboard'),
         actions: [
           Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 8.0), // Adjust if needed
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
             // Settings button to navigate to SettingsScreen
             child: IconButton(
               icon: const Icon(Icons.settings),
