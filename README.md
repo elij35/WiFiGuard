@@ -51,7 +51,11 @@ and quick security fixes.
   - Match detected services against real-world vulnerabilities.
 
 ---
+## Demo
 
+[![Demo](https://img.youtube.com/vi/p-osD8AzM0U/0.jpg)](https://www.youtube.com/watch?v=p-osD8AzM0U)
+
+---
 ## User Guide
 
 ### 1. Installation & Setup
